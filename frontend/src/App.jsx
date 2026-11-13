@@ -40,71 +40,74 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
+    <div className="min-h-screen bg-green-50 text-gray-900 font-sans flex flex-col">
       {/* Header */}
-      <header className="bg-green-700 text-white shadow-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-          {/* Logo & Status Badges */}
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold tracking-tight flex items-center gap-2">
-              <span>📚</span>
-              <span>GramShiksha</span>
-            </h1>
+      <header className="bg-green-600 text-white shadow-md sticky top-0 z-50">
+        <div className="max-w-3xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-3">
+          {/* Logo / App Name */}
+          <div className="flex items-center gap-2">
+            <span className="text-2xl" role="img" aria-label="books">📚</span>
+            <span className="text-xl sm:text-2xl font-bold tracking-tight">GramShiksha</span>
+          </div>
 
+          {/* Online/Offline Badge and Sync Badge */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
             {/* Online/Offline Badge */}
             <span
-              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold min-h-[32px] shadow-xs ${
                 isOnline
-                  ? 'bg-green-800 text-green-100 border border-green-600'
-                  : 'bg-amber-600 text-white border border-amber-500'
+                  ? 'bg-green-700 text-green-100 border border-green-500'
+                  : 'bg-amber-600 text-white border border-amber-400'
               }`}
             >
               <span
-                className={`w-2 h-2 rounded-full ${
-                  isOnline ? 'bg-emerald-400' : 'bg-red-300'
+                className={`w-2.5 h-2.5 rounded-full ${
+                  isOnline ? 'bg-emerald-300' : 'bg-red-300'
                 }`}
               />
               {isOnline ? 'Online' : 'Offline'}
             </span>
 
             {/* Sync Badge */}
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-800/80 text-green-100 border border-green-600">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold bg-green-700/90 text-green-100 border border-green-500 min-h-[32px] shadow-xs">
               {syncStatus === 'syncing' ? (
                 <>
-                  <span className="w-2 h-2 rounded-full bg-yellow-400 animate-ping" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-300 animate-ping" />
                   <span>Syncing...</span>
                 </>
               ) : (
                 <>
-                  <span>✓</span>
+                  <span className="font-bold text-emerald-300">✓</span>
                   <span>Synced</span>
                 </>
               )}
             </span>
           </div>
-
-          {/* Role Switcher */}
-          <nav className="flex items-center gap-1 bg-green-800/60 p-1 rounded-xl">
-            {TABS.map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTab(t)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-semibold transition-all cursor-pointer ${
-                  tab === t
-                    ? 'bg-white text-green-800 shadow-sm'
-                    : 'text-green-100 hover:bg-green-600/70'
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </nav>
         </div>
       </header>
 
-      {/* Main Views */}
-      <main className="py-4">
+      {/* Pill Navigation (active tab green, others white with border, min 44px tap targets) */}
+      <div className="w-full max-w-3xl mx-auto px-4 pt-5 pb-1">
+        <nav className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3" aria-label="Role Navigation">
+          {TABS.map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTab(t)}
+              className={`min-h-[44px] min-w-[44px] px-5 py-2.5 rounded-full text-base font-semibold transition-all cursor-pointer flex items-center justify-center shadow-xs active:scale-95 ${
+                tab === t
+                  ? 'bg-green-600 text-white border-2 border-green-600 shadow-sm'
+                  : 'bg-white text-green-800 border-2 border-green-200 hover:border-green-400 hover:bg-green-100/60'
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Main Views: max-w-3xl centered content */}
+      <main className="w-full max-w-3xl mx-auto px-4 py-5 flex-1">
         {tab === 'Student' && <Student onQueued={refresh} />}
         {tab === 'Planner' && <Planner />}
         {tab === 'Resources' && <Resources />}

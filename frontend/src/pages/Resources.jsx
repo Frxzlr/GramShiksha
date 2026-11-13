@@ -143,10 +143,10 @@ export default function Resources() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex items-center justify-center">
+      <div className="w-full py-16 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-600 font-medium text-sm">Loading resource tracker...</p>
+          <p className="text-gray-700 font-semibold text-base">Loading resource tracker...</p>
         </div>
       </div>
     )
@@ -154,153 +154,151 @@ export default function Resources() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex items-center justify-center">
-        <div className="bg-white p-6 md:p-8 rounded-xl shadow max-w-md w-full border border-red-100 text-center">
-          <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">
-            !
-          </div>
-          <h2 className="text-lg font-bold text-gray-900 mb-1">Failed to Load Resources</h2>
-          <p className="text-sm text-red-600 mb-6">{error}</p>
-          <button
-            onClick={fetchData}
-            className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg text-sm transition-colors cursor-pointer"
-          >
-            Retry
-          </button>
+      <div className="w-full my-8 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-red-200 text-center space-y-4">
+        <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-xl font-bold">
+          !
         </div>
+        <h2 className="text-xl font-bold text-gray-900">Failed to Load Resources</h2>
+        <p className="text-base text-red-600">{error}</p>
+        <button
+          onClick={fetchData}
+          className="min-h-[44px] px-6 py-2.5 bg-green-600 hover:bg-green-700 active:scale-95 text-white font-semibold rounded-xl text-base transition cursor-pointer shadow-xs"
+        >
+          Retry
+        </button>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8 text-left">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header & Filter */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Resource Tracker</h2>
-            <p className="text-sm text-gray-600 mt-1">
-              Track educational inventory, identify shortages, and adjust supplies in real time.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 self-start sm:self-auto">
-            <label htmlFor="school-filter" className="text-sm font-medium text-gray-700 whitespace-nowrap">
-              School:
-            </label>
-            <select
-              id="school-filter"
-              value={selectedSchoolId}
-              onChange={(e) => setSelectedSchoolId(e.target.value)}
-              className="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm cursor-pointer"
-            >
-              <option value="">All Schools</option>
-              {schools.map((school) => (
-                <option key={school.id} value={school.id}>
-                  {school.name}
-                </option>
-              ))}
-            </select>
-          </div>
+    <div className="w-full space-y-6 text-left">
+      {/* Header & Filter Card */}
+      <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 border border-green-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Resource Tracker</h2>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">
+            Track educational inventory, identify shortages, and adjust supplies in real time.
+          </p>
         </div>
 
-        {/* Resources Table Card */}
-        <div className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50/75 text-xs uppercase tracking-wider text-gray-600">
-                  <th scope="col" className="px-6 py-3.5 font-semibold">School</th>
-                  <th scope="col" className="px-6 py-3.5 font-semibold">Item</th>
-                  <th scope="col" className="px-6 py-3.5 font-semibold text-center">Stock</th>
-                  <th scope="col" className="px-6 py-3.5 font-semibold text-center">Needed</th>
-                  <th scope="col" className="px-6 py-3.5 font-semibold text-center">Gap</th>
+        <div className="flex items-center gap-2.5 self-start sm:self-auto">
+          <label htmlFor="school-filter" className="text-sm font-semibold text-gray-700 whitespace-nowrap">
+            School:
+          </label>
+          <select
+            id="school-filter"
+            value={selectedSchoolId}
+            onChange={(e) => setSelectedSchoolId(e.target.value)}
+            className="min-h-[44px] bg-white border border-gray-300 rounded-xl px-4 py-2 text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-xs cursor-pointer font-medium"
+          >
+            <option value="">All Schools</option>
+            {schools.map((school) => (
+              <option key={school.id} value={school.id}>
+                {school.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Resources Table Card: horizontal scroll on small screens, striped rows, red-tinted rows for gaps */}
+      <div className="bg-white rounded-2xl shadow-sm border border-green-100 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[560px]">
+            <thead>
+              <tr className="border-b border-gray-200 bg-green-100/60 text-xs sm:text-sm uppercase tracking-wider text-green-950 font-bold">
+                <th scope="col" className="px-5 py-4">School</th>
+                <th scope="col" className="px-5 py-4">Item</th>
+                <th scope="col" className="px-5 py-4 text-center">Stock</th>
+                <th scope="col" className="px-5 py-4 text-center">Needed</th>
+                <th scope="col" className="px-5 py-4 text-center">Gap</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 text-base">
+              {filteredResources.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-10 text-center text-gray-500 text-base">
+                    No resources found for the selected filter.
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 text-sm">
-                {filteredResources.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
-                      No resources found for the selected filter.
-                    </td>
-                  </tr>
-                ) : (
-                  filteredResources.map((resource) => {
-                    const schoolName =
-                      schoolMap[resource.schoolId] || resource.schoolName || `School #${resource.schoolId}`
-                    const itemName = resource.item || resource.name || 'Unnamed Resource'
-                    const stock = resource.stock ?? 0
-                    const needed = resource.needed ?? 0
-                    const gap = needed - stock
-                    const hasGap = gap > 0
+              ) : (
+                filteredResources.map((resource) => {
+                  const schoolName =
+                    schoolMap[resource.schoolId] || resource.schoolName || `School #${resource.schoolId}`
+                  const itemName = resource.item || resource.name || 'Unnamed Resource'
+                  const stock = resource.stock ?? 0
+                  const needed = resource.needed ?? 0
+                  const gap = needed - stock
+                  const hasGap = gap > 0
 
-                    return (
-                      <tr
-                        key={resource.id}
-                        className={`transition-colors ${
-                          hasGap ? 'bg-red-50 hover:bg-red-100/60' : 'hover:bg-gray-50'
-                        }`}
-                      >
-                        {/* School */}
-                        <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                          {schoolName}
-                        </td>
+                  return (
+                    <tr
+                      key={resource.id}
+                      className={`transition-colors ${
+                        hasGap
+                          ? 'bg-red-50/80 hover:bg-red-100/70 border-l-4 border-l-red-500'
+                          : 'even:bg-gray-50/50 hover:bg-green-50/40'
+                      }`}
+                    >
+                      {/* School */}
+                      <td className="px-5 py-4 font-semibold text-gray-900 whitespace-nowrap">
+                        {schoolName}
+                      </td>
 
-                        {/* Item */}
-                        <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
-                          {itemName}
-                        </td>
+                      {/* Item */}
+                      <td className="px-5 py-4 text-gray-800 capitalize whitespace-nowrap">
+                        {itemName}
+                      </td>
 
-                        {/* Stock with inline +/- buttons */}
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center justify-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => handleStockChange(resource.id, -1)}
-                              disabled={stock <= 0}
-                              className="w-7 h-7 flex items-center justify-center rounded border border-gray-300 bg-white text-gray-700 font-bold hover:bg-gray-100 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer shadow-xs"
-                              aria-label="Decrease stock"
-                            >
-                              -
-                            </button>
-                            <span className="w-10 text-center font-semibold text-gray-900 tabular-nums">
-                              {stock}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => handleStockChange(resource.id, 1)}
-                              className="w-7 h-7 flex items-center justify-center rounded border border-gray-300 bg-white text-gray-700 font-bold hover:bg-gray-100 active:scale-95 transition cursor-pointer shadow-xs"
-                              aria-label="Increase stock"
-                            >
-                              +
-                            </button>
-                          </div>
-                        </td>
-
-                        {/* Needed */}
-                        <td className="px-6 py-4 text-center font-medium text-gray-700 whitespace-nowrap tabular-nums">
-                          {needed}
-                        </td>
-
-                        {/* Gap */}
-                        <td className="px-6 py-4 text-center whitespace-nowrap tabular-nums">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                              hasGap
-                                ? 'bg-red-100 text-red-700'
-                                : 'bg-green-100 text-green-700'
-                            }`}
+                      {/* Stock with inline +/- buttons: large tap targets (min 44px) */}
+                      <td className="px-5 py-4 whitespace-nowrap">
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleStockChange(resource.id, -1)}
+                            disabled={stock <= 0}
+                            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl border border-gray-300 bg-white text-gray-800 font-bold hover:bg-green-50 hover:border-green-500 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed text-lg shadow-xs transition cursor-pointer"
+                            aria-label="Decrease stock"
                           >
-                            {gap}
+                            -
+                          </button>
+                          <span className="w-12 text-center font-bold text-gray-900 tabular-nums text-lg">
+                            {stock}
                           </span>
-                        </td>
-                      </tr>
-                    )
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleStockChange(resource.id, 1)}
+                            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl border border-gray-300 bg-white text-gray-800 font-bold hover:bg-green-50 hover:border-green-500 active:scale-95 text-lg shadow-xs transition cursor-pointer"
+                            aria-label="Increase stock"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </td>
+
+                      {/* Needed */}
+                      <td className="px-5 py-4 text-center font-semibold text-gray-800 whitespace-nowrap tabular-nums text-base">
+                        {needed}
+                      </td>
+
+                      {/* Gap */}
+                      <td className="px-5 py-4 text-center whitespace-nowrap tabular-nums">
+                        <span
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold min-h-[30px] ${
+                            hasGap
+                              ? 'bg-red-100 text-red-800 border border-red-300'
+                              : 'bg-green-100 text-green-800 border border-green-300'
+                          }`}
+                        >
+                          {gap}
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
