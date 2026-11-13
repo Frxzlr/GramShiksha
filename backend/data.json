@@ -79,7 +79,7 @@
       ]
     },
     {
-      "id": 1794603962622,
+      "id": 1794606187974,
       "title": "Force and Motion",
       "summary": "A force is a push or a pull that can change the motion or shape of an object. Friction is a resistive force that opposes motion between surfaces sliding against each other. Gravity pulls objects toward the center of the Earth and gives them weight. Balanced forces keep an object at rest or moving at a constant speed.",
       "summary_hi": "बल एक धक्का या खिंचाव है जो किसी वस्तु की गति या आकार को बदल सकता है। घर्षण एक विरोधी बल है जो एक दूसरे के संपर्क में आने वाली सतहों की गति को रोकता है। गुरुत्वाकर्षण वस्तुओं को पृथ्वी के केंद्र की ओर खींचता है और उन्हें भार देता है। संतुलित बल किसी वस्तु को स्थिर या एक समान गति में रखते हैं।",
@@ -824,6 +824,22 @@
       "score": 1,
       "total": 2,
       "at": 1794598200000
+    }
+  ],
+  "connectivity": [
+    {
+      "village": "Malegaon Khurd",
+      "mbps": 22.08,
+      "rttMs": 18,
+      "online": true,
+      "at": 1794606098200
+    },
+    {
+      "village": "Dholera",
+      "mbps": 148.84,
+      "rttMs": 15,
+      "online": true,
+      "at": 1794606109787
     }
   ]
 }

@@ -122,6 +122,10 @@ export default function Planner() {
     ? data.schoolsNeedingAttention
     : []
 
+  const liveConnectivity = Array.isArray(data?.liveConnectivity)
+    ? data.liveConnectivity
+    : []
+
   const statCards = [
     { label: 'Total Schools', value: totals.schools ?? 0 },
     { label: 'Total Students', value: totals.students ?? 0 },
@@ -312,6 +316,95 @@ export default function Planner() {
                 </div>
               )
             })}
+          </div>
+        )}
+      </div>
+
+      {/* Live connectivity from devices */}
+      <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 border border-green-100 space-y-4">
+        <div>
+          <h3 className="text-xl font-bold text-gray-900">Live connectivity from devices</h3>
+          <p className="text-sm text-gray-600 mt-0.5">
+            Real-time ping latency and download throughput sampled by client tablets in the field.
+          </p>
+        </div>
+
+        {liveConnectivity.length === 0 ? (
+          <p className="text-base text-gray-500 py-6 text-center font-medium">
+            No device readings yet
+          </p>
+        ) : (
+          <div className="space-y-6">
+            {/* Recharts BarChart of avgMbps per village */}
+            <div className="w-full h-[260px] pt-1">
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart
+                  data={liveConnectivity}
+                  margin={{ top: 10, right: 10, left: -20, bottom: 35 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0fdf4" />
+                  <XAxis
+                    dataKey="village"
+                    tick={{ fill: '#374151', fontSize: 12 }}
+                    interval={0}
+                    angle={-20}
+                    textAnchor="end"
+                    height={45}
+                  />
+                  <YAxis
+                    tick={{ fill: '#374151', fontSize: 12 }}
+                    unit=" Mbps"
+                  />
+                  <Tooltip
+                    formatter={(val) => [`${val} Mbps`, 'Avg Live Speed']}
+                    contentStyle={{
+                      backgroundColor: '#ffffff',
+                      borderRadius: '12px',
+                      border: '1px solid #bbf7d0',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                      fontSize: '14px',
+                    }}
+                  />
+                  <Bar dataKey="avgMbps" fill="#059669" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Small table with uptimePct and lastSeen */}
+            <div className="overflow-x-auto rounded-xl border border-green-100">
+              <table className="w-full text-left border-collapse text-sm min-w-[480px]">
+                <thead>
+                  <tr className="bg-green-50/70 border-b border-green-100 text-xs font-bold text-green-950 uppercase tracking-wider">
+                    <th scope="col" className="px-4 py-3">Village</th>
+                    <th scope="col" className="px-4 py-3 text-center">Avg Speed</th>
+                    <th scope="col" className="px-4 py-3 text-center">Uptime</th>
+                    <th scope="col" className="px-4 py-3 text-center">Last Seen</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 text-gray-800">
+                  {liveConnectivity.map((item, idx) => (
+                    <tr key={idx} className="even:bg-gray-50/50 hover:bg-green-50/30">
+                      <td className="px-4 py-3 font-semibold text-gray-900">{item.village}</td>
+                      <td className="px-4 py-3 text-center font-bold text-green-700">{item.avgMbps} Mbps</td>
+                      <td className="px-4 py-3 text-center font-medium">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                          item.uptimePct >= 80
+                            ? 'bg-green-100 text-green-800 border border-green-200'
+                            : item.uptimePct >= 50
+                            ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                            : 'bg-red-100 text-red-800 border border-red-200'
+                        }`}>
+                          {item.uptimePct}%
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center text-xs text-gray-500 font-mono">
+                        {item.lastSeen ? new Date(item.lastSeen).toLocaleTimeString() : 'Just now'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

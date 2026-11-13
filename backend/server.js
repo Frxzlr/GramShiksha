@@ -225,6 +225,7 @@ const seed = {
     { lessonId: 1, lessonTitle: 'The Water Cycle', village: 'Bargi', score: 0, total: 2, at: 1794295200000 },
     { lessonId: 2, lessonTitle: 'Photosynthesis', village: 'Bargi', score: 1, total: 2, at: 1794598200000 },
   ],
+  connectivity: [],
 }
 
 const load = () => {
@@ -277,6 +278,55 @@ app.post('/api/results', (req, res) => {
   db.results.push(...items)
   save(db)
   res.json({ ok: true, total: db.results.length })
+})
+
+const pingPayload = 'GramShiksha connectivity measurement ping payload. '.repeat(1970) // ~100 KB
+app.get('/api/ping', (_, res) => {
+  res.set('Cache-Control', 'no-store')
+  res.set('Content-Type', 'text/plain; charset=utf-8')
+  res.send(pingPayload)
+})
+
+app.get('/api/connectivity', (_, res) => res.json(load().connectivity || []))
+
+app.post('/api/connectivity', (req, res) => {
+  const db = load()
+  db.connectivity = db.connectivity || []
+  const rawItems = Array.isArray(req.body) ? req.body : [req.body]
+  const validItems = []
+
+  for (const item of rawItems) {
+    if (
+      item &&
+      typeof item.village === 'string' &&
+      item.village.trim() &&
+      typeof item.mbps === 'number' &&
+      !isNaN(item.mbps) &&
+      (item.rttMs === null || item.rttMs === undefined || (typeof item.rttMs === 'number' && !isNaN(item.rttMs))) &&
+      typeof item.online === 'boolean' &&
+      typeof item.at === 'number' &&
+      !isNaN(item.at)
+    ) {
+      validItems.push({
+        village: item.village.trim(),
+        mbps: Number(item.mbps),
+        rttMs: typeof item.rttMs === 'number' ? Number(item.rttMs) : null,
+        online: Boolean(item.online),
+        at: Number(item.at),
+      })
+    }
+  }
+
+  const batch = validItems.slice(0, 50)
+  if (batch.length > 0) {
+    db.connectivity.push(...batch)
+    if (db.connectivity.length > 500) {
+      db.connectivity = db.connectivity.slice(-500)
+    }
+    save(db)
+  }
+
+  res.json({ ok: true, added: batch.length, total: db.connectivity.length })
 })
 
 app.get('/api/schools', (_, res) => res.json(load().schools))
@@ -442,6 +492,46 @@ app.get('/api/analytics', (_, res) => {
     }
   }).sort((a, b) => b.score - a.score)
 
+  const liveRecords = db.connectivity || []
+  const liveByVillage = {}
+  for (const r of liveRecords) {
+    const v = r.village || 'Unknown'
+    if (!liveByVillage[v]) {
+      liveByVillage[v] = {
+        totalMbps: 0,
+        totalRtt: 0,
+        rttCount: 0,
+        onlineCount: 0,
+        samples: 0,
+        lastSeen: 0,
+      }
+    }
+    liveByVillage[v].samples += 1
+    liveByVillage[v].totalMbps += typeof r.mbps === 'number' ? r.mbps : 0
+    if (typeof r.rttMs === 'number' && r.rttMs !== null) {
+      liveByVillage[v].totalRtt += r.rttMs
+      liveByVillage[v].rttCount += 1
+    }
+    if (r.online === true) {
+      liveByVillage[v].onlineCount += 1
+    }
+    if (r.at && r.at > liveByVillage[v].lastSeen) {
+      liveByVillage[v].lastSeen = r.at
+    }
+  }
+
+  const liveConnectivity = Object.keys(liveByVillage).map((village) => {
+    const vData = liveByVillage[village]
+    return {
+      village,
+      avgMbps: Number((vData.totalMbps / vData.samples).toFixed(2)),
+      avgRttMs: vData.rttCount > 0 ? Math.round(vData.totalRtt / vData.rttCount) : null,
+      uptimePct: Math.round((vData.onlineCount / vData.samples) * 100),
+      samples: vData.samples,
+      lastSeen: vData.lastSeen || Date.now(),
+    }
+  })
+
   res.json({
     totals,
     scoreByVillage,
@@ -449,6 +539,7 @@ app.get('/api/analytics', (_, res) => {
     connectivity,
     resourceGaps,
     priorityScore,
+    liveConnectivity,
   })
 })
 
@@ -615,4 +706,4 @@ ${text}`
   }
 })
 
-app.listen(4000, () => console.log('API running on http://localhost:4000'))
+app.listen(4000, '0.0.0.0', () => console.log('API running on http://localhost:4000'))
