@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import Student from './pages/Student'
 import Planner from './pages/Planner'
 import Resources from './pages/Resources'
+import Teacher from './pages/Teacher'
 
-const TABS = ['Student', 'Planner', 'Resources']
+const TABS = ['Student', 'Planner', 'Resources', 'Teacher']
 
 export default function App() {
   const [tab, setTab] = useState('Student')
@@ -107,6 +108,7 @@ export default function App() {
         {tab === 'Student' && <Student onQueued={refresh} />}
         {tab === 'Planner' && <Planner />}
         {tab === 'Resources' && <Resources />}
+        {tab === 'Teacher' && <Teacher />}
       </main>
     </div>
   )

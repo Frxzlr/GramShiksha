@@ -77,6 +77,59 @@
           "answer": 1
         }
       ]
+    },
+    {
+      "id": 1794603962622,
+      "title": "Force and Motion",
+      "summary": "A force is a push or a pull that can change the motion or shape of an object. Friction is a resistive force that opposes motion between surfaces sliding against each other. Gravity pulls objects toward the center of the Earth and gives them weight. Balanced forces keep an object at rest or moving at a constant speed.",
+      "summary_hi": "बल एक धक्का या खिंचाव है जो किसी वस्तु की गति या आकार को बदल सकता है। घर्षण एक विरोधी बल है जो एक दूसरे के संपर्क में आने वाली सतहों की गति को रोकता है। गुरुत्वाकर्षण वस्तुओं को पृथ्वी के केंद्र की ओर खींचता है और उन्हें भार देता है। संतुलित बल किसी वस्तु को स्थिर या एक समान गति में रखते हैं।",
+      "quiz": [
+        {
+          "q": "What is a force?",
+          "options": [
+            "A push or a pull",
+            "Only heat",
+            "Sound energy"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Which force slows down a moving bicycle when you stop pedaling?",
+          "options": [
+            "Magnetic force",
+            "Friction",
+            "Electric force"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "What force pulls dropped objects toward the ground?",
+          "options": [
+            "Friction",
+            "Tension",
+            "Gravity"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "What happens when balanced forces act on a stationary rock?",
+          "options": [
+            "It remains at rest",
+            "It flies upward",
+            "It explodes"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "Why do rough surfaces produce more friction than smooth surfaces?",
+          "options": [
+            "They are colder",
+            "Microscopic bumps interlock more",
+            "They have less mass"
+          ],
+          "answer": 1
+        }
+      ]
     }
   ],
   "schools": [
@@ -223,7 +276,7 @@
       "id": 8,
       "schoolId": 2,
       "item": "projectors",
-      "stock": 4,
+      "stock": 3,
       "needed": 3
     },
     {
@@ -419,7 +472,7 @@
       "id": 36,
       "schoolId": 8,
       "item": "textbooks",
-      "stock": 71,
+      "stock": 70,
       "needed": 195
     },
     {
@@ -771,14 +824,6 @@
       "score": 1,
       "total": 2,
       "at": 1794598200000
-    },
-    {
-      "lessonId": 1,
-      "lessonTitle": "The Water Cycle",
-      "village": "Bargi",
-      "score": 2,
-      "total": 2,
-      "at": 1794600000000
     }
   ]
 }

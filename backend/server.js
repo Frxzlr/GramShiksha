@@ -452,4 +452,167 @@ app.get('/api/analytics', (_, res) => {
   })
 })
 
+const demoLesson = {
+  mocked: true,
+  title: 'Force and Motion',
+  summary:
+    'A force is a push or a pull that can change the motion or shape of an object. Friction is a resistive force that opposes motion between surfaces sliding against each other. Gravity pulls objects toward the center of the Earth and gives them weight. Balanced forces keep an object at rest or moving at a constant speed.',
+  summary_hi:
+    'बल एक धक्का या खिंचाव है जो किसी वस्तु की गति या आकार को बदल सकता है। घर्षण एक विरोधी बल है जो एक दूसरे के संपर्क में आने वाली सतहों की गति को रोकता है। गुरुत्वाकर्षण वस्तुओं को पृथ्वी के केंद्र की ओर खींचता है और उन्हें भार देता है। संतुलित बल किसी वस्तु को स्थिर या एक समान गति में रखते हैं।',
+  quiz: [
+    {
+      q: 'What is a force?',
+      options: ['A push or a pull', 'Only heat', 'Sound energy'],
+      answer: 0,
+    },
+    {
+      q: 'Which force slows down a moving bicycle when you stop pedaling?',
+      options: ['Magnetic force', 'Friction', 'Electric force'],
+      answer: 1,
+    },
+    {
+      q: 'What force pulls dropped objects toward the ground?',
+      options: ['Friction', 'Tension', 'Gravity'],
+      answer: 2,
+    },
+    {
+      q: 'What happens when balanced forces act on a stationary rock?',
+      options: ['It remains at rest', 'It flies upward', 'It explodes'],
+      answer: 0,
+    },
+    {
+      q: 'Why do rough surfaces produce more friction than smooth surfaces?',
+      options: ['They are colder', 'Microscopic bumps interlock more', 'They have less mass'],
+      answer: 1,
+    },
+  ],
+}
+
+app.post('/api/generate', async (req, res) => {
+  const text = String(req.body?.text || '').slice(0, 8000).trim()
+  if (text.length < 40) {
+    return res.status(400).json({ error: 'Please paste more text.' })
+  }
+
+  const prompt = `You are a teacher for rural Indian students in classes 6-8.
+Act as a teacher for rural Indian students in classes 6-8 and reply with ONLY valid JSON of this exact shape:
+{
+  "title": "string",
+  "summary": "string (4-5 simple sentences, easy English)",
+  "summary_hi": "string (same summary in simple Hindi)",
+  "quiz": [
+    {
+      "q": "string",
+      "options": ["string", "string", "string"],
+      "answer": 0
+    }
+  ]
+}
+The quiz must contain exactly 5 questions. Each question must have exactly 3 options, and answer must be an integer 0, 1, or 2 representing the index of the correct option. Do not include markdown code blocks or any other text before or after the JSON.
+
+Chapter text:
+${text}`
+
+  try {
+    let rawOutput = null
+
+    if (process.env.GEMINI_API_KEY) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(process.env.GEMINI_API_KEY)}`
+      const apiRes = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { responseMimeType: 'application/json' },
+        }),
+      })
+
+      if (!apiRes.ok) {
+        const errBody = await apiRes.text().catch(() => '')
+        throw new Error(`Gemini API error (Status ${apiRes.status}): ${errBody}`)
+      }
+
+      const json = await apiRes.json()
+      rawOutput = json?.candidates?.[0]?.content?.parts?.[0]?.text
+    } else if (process.env.ANTHROPIC_API_KEY) {
+      const url = 'https://api.anthropic.com/v1/messages'
+      const apiRes = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1500,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      })
+
+      if (!apiRes.ok) {
+        const errBody = await apiRes.text().catch(() => '')
+        throw new Error(`Anthropic API error (Status ${apiRes.status}): ${errBody}`)
+      }
+
+      const json = await apiRes.json()
+      rawOutput = json?.content?.[0]?.text
+    } else {
+      return res.json(demoLesson)
+    }
+
+    if (!rawOutput || typeof rawOutput !== 'string') {
+      throw new Error('Empty response received from AI model')
+    }
+
+    const firstBrace = rawOutput.indexOf('{')
+    const lastBrace = rawOutput.lastIndexOf('}')
+    if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
+      throw new Error('No valid JSON object boundaries found in AI output')
+    }
+
+    const jsonStr = rawOutput.substring(firstBrace, lastBrace + 1)
+    const parsed = JSON.parse(jsonStr)
+
+    const isValid =
+      typeof parsed?.title === 'string' &&
+      parsed.title.trim().length > 0 &&
+      typeof parsed?.summary === 'string' &&
+      parsed.summary.trim().length > 0 &&
+      typeof parsed?.summary_hi === 'string' &&
+      parsed.summary_hi.trim().length > 0 &&
+      Array.isArray(parsed?.quiz) &&
+      parsed.quiz.length === 5 &&
+      parsed.quiz.every(
+        (item) =>
+          typeof item?.q === 'string' &&
+          item.q.trim().length > 0 &&
+          Array.isArray(item?.options) &&
+          item.options.length === 3 &&
+          item.options.every((opt) => typeof opt === 'string' && opt.trim().length > 0) &&
+          Number.isInteger(item?.answer) &&
+          item.answer >= 0 &&
+          item.answer <= 2
+      )
+
+    if (!isValid) {
+      throw new Error('AI response structure did not pass validation requirements')
+    }
+
+    res.json({
+      title: parsed.title.trim(),
+      summary: parsed.summary.trim(),
+      summary_hi: parsed.summary_hi.trim(),
+      quiz: parsed.quiz.map((q) => ({
+        q: q.q.trim(),
+        options: q.options.map((opt) => opt.trim()),
+        answer: q.answer,
+      })),
+    })
+  } catch (err) {
+    console.error('AI generation error:', err)
+    return res.json(demoLesson)
+  }
+})
+
 app.listen(4000, () => console.log('API running on http://localhost:4000'))
