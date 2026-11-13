@@ -1,0 +1,784 @@
+{
+  "lessons": [
+    {
+      "id": 1,
+      "title": "The Water Cycle",
+      "summary": "Water evaporates from rivers and oceans, forms clouds, and returns as rain. This cycle keeps our wells and fields supplied.",
+      "summary_hi": "नदियों और समुद्र का पानी भाप बनकर बादल बनाता है और फिर बारिश के रूप में लौटता है। इसी चक्र से हमारे कुएँ और खेत भरते हैं।",
+      "quiz": [
+        {
+          "q": "What turns water into vapour?",
+          "options": [
+            "Sun's heat",
+            "Moon",
+            "Soil"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "What is water falling from clouds called?",
+          "options": [
+            "Evaporation",
+            "Precipitation",
+            "Condensation"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Photosynthesis",
+      "summary": "Plants use sunlight, water and carbon dioxide to make their own food, and they release oxygen.",
+      "summary_hi": "पौधे सूरज की रोशनी, पानी और कार्बन डाइऑक्साइड से अपना भोजन बनाते हैं और ऑक्सीजन छोड़ते हैं।",
+      "quiz": [
+        {
+          "q": "Which gas do plants release?",
+          "options": [
+            "Oxygen",
+            "Nitrogen",
+            "Smoke"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "What gives leaves their green colour?",
+          "options": [
+            "Chlorophyll",
+            "Soil",
+            "Water"
+          ],
+          "answer": 0
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Fractions",
+      "summary": "A fraction shows part of a whole. In 3/4, 3 is the numerator and 4 is the denominator.",
+      "summary_hi": "भिन्न किसी पूरे का एक हिस्सा दिखाती है। 3/4 में 3 अंश है और 4 हर है।",
+      "quiz": [
+        {
+          "q": "In 1/2, which number is the denominator?",
+          "options": [
+            "1",
+            "2",
+            "3"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "Which fraction is the biggest?",
+          "options": [
+            "1/4",
+            "1/2",
+            "1/8"
+          ],
+          "answer": 1
+        }
+      ]
+    }
+  ],
+  "schools": [
+    {
+      "id": 1,
+      "name": "Govt Model High School Malegaon",
+      "village": "Malegaon Khurd",
+      "district": "Pune, Maharashtra",
+      "students": 145,
+      "teachers": 6,
+      "internetMbps": 12,
+      "uptimePct": 88,
+      "hasComputers": 8
+    },
+    {
+      "id": 2,
+      "name": "Rajkiya Prathmik Vidyalaya Dholera",
+      "village": "Dholera",
+      "district": "Ahmedabad, Gujarat",
+      "students": 180,
+      "teachers": 8,
+      "internetMbps": 18,
+      "uptimePct": 94,
+      "hasComputers": 12
+    },
+    {
+      "id": 3,
+      "name": "Govt Upper Primary School Shivgarh",
+      "village": "Shivgarh",
+      "district": "Rae Bareli, Uttar Pradesh",
+      "students": 230,
+      "teachers": 4,
+      "internetMbps": 2,
+      "uptimePct": 45,
+      "hasComputers": 2
+    },
+    {
+      "id": 4,
+      "name": "Adarsh Gramin Vidyalaya Chhotaki",
+      "village": "Chhotaki Chenari",
+      "district": "Rohtas, Bihar",
+      "students": 310,
+      "teachers": 5,
+      "internetMbps": 1,
+      "uptimePct": 35,
+      "hasComputers": 1
+    },
+    {
+      "id": 5,
+      "name": "Govt Ashram High School Paderu",
+      "village": "Paderu",
+      "district": "Alluri Sitharama Raju, Andhra Pradesh",
+      "students": 165,
+      "teachers": 5,
+      "internetMbps": 3,
+      "uptimePct": 52,
+      "hasComputers": 3
+    },
+    {
+      "id": 6,
+      "name": "Kasturba Gandhi Balika Vidyalaya Ramgarh",
+      "village": "Ramgarh",
+      "district": "Jaisalmer, Rajasthan",
+      "students": 125,
+      "teachers": 4,
+      "internetMbps": 4,
+      "uptimePct": 62,
+      "hasComputers": 4
+    },
+    {
+      "id": 7,
+      "name": "Govt Higher Secondary School Sonapur",
+      "village": "Sonapur",
+      "district": "Kamrup Metropolitan, Assam",
+      "students": 215,
+      "teachers": 7,
+      "internetMbps": 8,
+      "uptimePct": 76,
+      "hasComputers": 6
+    },
+    {
+      "id": 8,
+      "name": "Govt Primary School Bargi",
+      "village": "Bargi",
+      "district": "Jabalpur, Madhya Pradesh",
+      "students": 195,
+      "teachers": 3,
+      "internetMbps": 0,
+      "uptimePct": 18,
+      "hasComputers": 0
+    }
+  ],
+  "resources": [
+    {
+      "id": 1,
+      "schoolId": 1,
+      "item": "textbooks",
+      "stock": 140,
+      "needed": 145
+    },
+    {
+      "id": 2,
+      "schoolId": 1,
+      "item": "tablets",
+      "stock": 15,
+      "needed": 20
+    },
+    {
+      "id": 3,
+      "schoolId": 1,
+      "item": "projectors",
+      "stock": 2,
+      "needed": 2
+    },
+    {
+      "id": 4,
+      "schoolId": 1,
+      "item": "science kits",
+      "stock": 4,
+      "needed": 5
+    },
+    {
+      "id": 5,
+      "schoolId": 1,
+      "item": "solar chargers",
+      "stock": 3,
+      "needed": 3
+    },
+    {
+      "id": 6,
+      "schoolId": 2,
+      "item": "textbooks",
+      "stock": 180,
+      "needed": 180
+    },
+    {
+      "id": 7,
+      "schoolId": 2,
+      "item": "tablets",
+      "stock": 24,
+      "needed": 25
+    },
+    {
+      "id": 8,
+      "schoolId": 2,
+      "item": "projectors",
+      "stock": 4,
+      "needed": 3
+    },
+    {
+      "id": 9,
+      "schoolId": 2,
+      "item": "science kits",
+      "stock": 6,
+      "needed": 6
+    },
+    {
+      "id": 10,
+      "schoolId": 2,
+      "item": "solar chargers",
+      "stock": 5,
+      "needed": 5
+    },
+    {
+      "id": 11,
+      "schoolId": 3,
+      "item": "textbooks",
+      "stock": 120,
+      "needed": 230
+    },
+    {
+      "id": 12,
+      "schoolId": 3,
+      "item": "tablets",
+      "stock": 2,
+      "needed": 25
+    },
+    {
+      "id": 13,
+      "schoolId": 3,
+      "item": "projectors",
+      "stock": 0,
+      "needed": 2
+    },
+    {
+      "id": 14,
+      "schoolId": 3,
+      "item": "science kits",
+      "stock": 1,
+      "needed": 6
+    },
+    {
+      "id": 15,
+      "schoolId": 3,
+      "item": "solar chargers",
+      "stock": 1,
+      "needed": 4
+    },
+    {
+      "id": 16,
+      "schoolId": 4,
+      "item": "textbooks",
+      "stock": 150,
+      "needed": 310
+    },
+    {
+      "id": 17,
+      "schoolId": 4,
+      "item": "tablets",
+      "stock": 0,
+      "needed": 30
+    },
+    {
+      "id": 18,
+      "schoolId": 4,
+      "item": "projectors",
+      "stock": 0,
+      "needed": 3
+    },
+    {
+      "id": 19,
+      "schoolId": 4,
+      "item": "science kits",
+      "stock": 0,
+      "needed": 8
+    },
+    {
+      "id": 20,
+      "schoolId": 4,
+      "item": "solar chargers",
+      "stock": 0,
+      "needed": 6
+    },
+    {
+      "id": 21,
+      "schoolId": 5,
+      "item": "textbooks",
+      "stock": 110,
+      "needed": 165
+    },
+    {
+      "id": 22,
+      "schoolId": 5,
+      "item": "tablets",
+      "stock": 4,
+      "needed": 20
+    },
+    {
+      "id": 23,
+      "schoolId": 5,
+      "item": "projectors",
+      "stock": 1,
+      "needed": 2
+    },
+    {
+      "id": 24,
+      "schoolId": 5,
+      "item": "science kits",
+      "stock": 2,
+      "needed": 5
+    },
+    {
+      "id": 25,
+      "schoolId": 5,
+      "item": "solar chargers",
+      "stock": 2,
+      "needed": 6
+    },
+    {
+      "id": 26,
+      "schoolId": 6,
+      "item": "textbooks",
+      "stock": 95,
+      "needed": 125
+    },
+    {
+      "id": 27,
+      "schoolId": 6,
+      "item": "tablets",
+      "stock": 5,
+      "needed": 15
+    },
+    {
+      "id": 28,
+      "schoolId": 6,
+      "item": "projectors",
+      "stock": 1,
+      "needed": 2
+    },
+    {
+      "id": 29,
+      "schoolId": 6,
+      "item": "science kits",
+      "stock": 2,
+      "needed": 4
+    },
+    {
+      "id": 30,
+      "schoolId": 6,
+      "item": "solar chargers",
+      "stock": 4,
+      "needed": 8
+    },
+    {
+      "id": 31,
+      "schoolId": 7,
+      "item": "textbooks",
+      "stock": 190,
+      "needed": 215
+    },
+    {
+      "id": 32,
+      "schoolId": 7,
+      "item": "tablets",
+      "stock": 12,
+      "needed": 20
+    },
+    {
+      "id": 33,
+      "schoolId": 7,
+      "item": "projectors",
+      "stock": 2,
+      "needed": 3
+    },
+    {
+      "id": 34,
+      "schoolId": 7,
+      "item": "science kits",
+      "stock": 4,
+      "needed": 6
+    },
+    {
+      "id": 35,
+      "schoolId": 7,
+      "item": "solar chargers",
+      "stock": 3,
+      "needed": 5
+    },
+    {
+      "id": 36,
+      "schoolId": 8,
+      "item": "textbooks",
+      "stock": 71,
+      "needed": 195
+    },
+    {
+      "id": 37,
+      "schoolId": 8,
+      "item": "tablets",
+      "stock": 0,
+      "needed": 25
+    },
+    {
+      "id": 38,
+      "schoolId": 8,
+      "item": "projectors",
+      "stock": 0,
+      "needed": 2
+    },
+    {
+      "id": 39,
+      "schoolId": 8,
+      "item": "science kits",
+      "stock": 0,
+      "needed": 6
+    },
+    {
+      "id": 40,
+      "schoolId": 8,
+      "item": "solar chargers",
+      "stock": 0,
+      "needed": 8
+    }
+  ],
+  "results": [
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Malegaon Khurd",
+      "score": 2,
+      "total": 2,
+      "at": 1792070100000
+    },
+    {
+      "lessonId": 2,
+      "lessonTitle": "Photosynthesis",
+      "village": "Malegaon Khurd",
+      "score": 2,
+      "total": 2,
+      "at": 1792502600000
+    },
+    {
+      "lessonId": 3,
+      "lessonTitle": "Fractions",
+      "village": "Malegaon Khurd",
+      "score": 1,
+      "total": 2,
+      "at": 1793019900000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Malegaon Khurd",
+      "score": 2,
+      "total": 2,
+      "at": 1793710800000
+    },
+    {
+      "lessonId": 2,
+      "lessonTitle": "Photosynthesis",
+      "village": "Malegaon Khurd",
+      "score": 2,
+      "total": 2,
+      "at": 1794290600000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Dholera",
+      "score": 2,
+      "total": 2,
+      "at": 1792159200000
+    },
+    {
+      "lessonId": 2,
+      "lessonTitle": "Photosynthesis",
+      "village": "Dholera",
+      "score": 2,
+      "total": 2,
+      "at": 1792677300000
+    },
+    {
+      "lessonId": 3,
+      "lessonTitle": "Fractions",
+      "village": "Dholera",
+      "score": 2,
+      "total": 2,
+      "at": 1793183400000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Dholera",
+      "score": 1,
+      "total": 2,
+      "at": 1793886600000
+    },
+    {
+      "lessonId": 3,
+      "lessonTitle": "Fractions",
+      "village": "Dholera",
+      "score": 2,
+      "total": 2,
+      "at": 1794455100000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Shivgarh",
+      "score": 1,
+      "total": 2,
+      "at": 1792241100000
+    },
+    {
+      "lessonId": 2,
+      "lessonTitle": "Photosynthesis",
+      "village": "Shivgarh",
+      "score": 0,
+      "total": 2,
+      "at": 1792768800000
+    },
+    {
+      "lessonId": 3,
+      "lessonTitle": "Fractions",
+      "village": "Shivgarh",
+      "score": 1,
+      "total": 2,
+      "at": 1793340300000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Shivgarh",
+      "score": 0,
+      "total": 2,
+      "at": 1793951400000
+    },
+    {
+      "lessonId": 2,
+      "lessonTitle": "Photosynthesis",
+      "village": "Shivgarh",
+      "score": 1,
+      "total": 2,
+      "at": 1794383400000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Chhotaki Chenari",
+      "score": 0,
+      "total": 2,
+      "at": 1792331400000
+    },
+    {
+      "lessonId": 2,
+      "lessonTitle": "Photosynthesis",
+      "village": "Chhotaki Chenari",
+      "score": 1,
+      "total": 2,
+      "at": 1792854600000
+    },
+    {
+      "lessonId": 3,
+      "lessonTitle": "Fractions",
+      "village": "Chhotaki Chenari",
+      "score": 0,
+      "total": 2,
+      "at": 1793451600000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Chhotaki Chenari",
+      "score": 0,
+      "total": 2,
+      "at": 1794040500000
+    },
+    {
+      "lessonId": 3,
+      "lessonTitle": "Fractions",
+      "village": "Chhotaki Chenari",
+      "score": 1,
+      "total": 2,
+      "at": 1794564600000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Paderu",
+      "score": 1,
+      "total": 2,
+      "at": 1792417800000
+    },
+    {
+      "lessonId": 2,
+      "lessonTitle": "Photosynthesis",
+      "village": "Paderu",
+      "score": 1,
+      "total": 2,
+      "at": 1792936800000
+    },
+    {
+      "lessonId": 3,
+      "lessonTitle": "Fractions",
+      "village": "Paderu",
+      "score": 2,
+      "total": 2,
+      "at": 1793502900000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Paderu",
+      "score": 0,
+      "total": 2,
+      "at": 1794131100000
+    },
+    {
+      "lessonId": 2,
+      "lessonTitle": "Photosynthesis",
+      "village": "Paderu",
+      "score": 1,
+      "total": 2,
+      "at": 1794476400000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Ramgarh",
+      "score": 1,
+      "total": 2,
+      "at": 1792502700000
+    },
+    {
+      "lessonId": 2,
+      "lessonTitle": "Photosynthesis",
+      "village": "Ramgarh",
+      "score": 2,
+      "total": 2,
+      "at": 1793027700000
+    },
+    {
+      "lessonId": 3,
+      "lessonTitle": "Fractions",
+      "village": "Ramgarh",
+      "score": 1,
+      "total": 2,
+      "at": 1793555400000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Ramgarh",
+      "score": 1,
+      "total": 2,
+      "at": 1794214800000
+    },
+    {
+      "lessonId": 3,
+      "lessonTitle": "Fractions",
+      "village": "Ramgarh",
+      "score": 2,
+      "total": 2,
+      "at": 1794550500000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Sonapur",
+      "score": 2,
+      "total": 2,
+      "at": 1792588200000
+    },
+    {
+      "lessonId": 2,
+      "lessonTitle": "Photosynthesis",
+      "village": "Sonapur",
+      "score": 1,
+      "total": 2,
+      "at": 1793107800000
+    },
+    {
+      "lessonId": 3,
+      "lessonTitle": "Fractions",
+      "village": "Sonapur",
+      "score": 2,
+      "total": 2,
+      "at": 1793618400000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Sonapur",
+      "score": 2,
+      "total": 2,
+      "at": 1794172800000
+    },
+    {
+      "lessonId": 2,
+      "lessonTitle": "Photosynthesis",
+      "village": "Sonapur",
+      "score": 1,
+      "total": 2,
+      "at": 1794419400000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Bargi",
+      "score": 0,
+      "total": 2,
+      "at": 1792678800000
+    },
+    {
+      "lessonId": 2,
+      "lessonTitle": "Photosynthesis",
+      "village": "Bargi",
+      "score": 0,
+      "total": 2,
+      "at": 1793199900000
+    },
+    {
+      "lessonId": 3,
+      "lessonTitle": "Fractions",
+      "village": "Bargi",
+      "score": 1,
+      "total": 2,
+      "at": 1793710500000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Bargi",
+      "score": 0,
+      "total": 2,
+      "at": 1794295200000
+    },
+    {
+      "lessonId": 2,
+      "lessonTitle": "Photosynthesis",
+      "village": "Bargi",
+      "score": 1,
+      "total": 2,
+      "at": 1794598200000
+    },
+    {
+      "lessonId": 1,
+      "lessonTitle": "The Water Cycle",
+      "village": "Bargi",
+      "score": 2,
+      "total": 2,
+      "at": 1794600000000
+    }
+  ]
+}
