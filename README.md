@@ -55,8 +55,13 @@ flowchart TD
     end
 
     subgraph Server["Server Layer (Node.js + Express ES Modules)"]
-        API["Express REST API (Port 4000 / Render)\n• /api/lessons • /api/results\n• /api/schools • /api/resources\n• /api/analytics • /api/connectivity\n• /api/ping • /api/generate"]
-        DB["File Store (backend/data.json)\n• Auto-migrating Seed Collections\n• 500-entry Capped Telemetry Queue"]
+        API["Express REST API (Port 4000 / Render)\n• /api/lessons • /api/results\n• /api/schools • /api/resources\n• /api/analytics • /api/connectivity\n• /api/ping • /api/generate • /api/health"]
+        DB["Storage Layer (backend/db.js)\n• PostgreSQL (Neon) when DATABASE_URL is set\n• Fallback: File Store (backend/data.json)\n• Auto-seeding & Migration"]
+    end
+
+    subgraph RelationalEngine["Relational & Sync Layer (database/)"]
+        SyncManager["Sync Manager (sync_manager.py)\n• ACID Batching & Savepoints\n• Mid-sync Rollback Protection\n• Idempotent Replay (ON CONFLICT)"]
+        AnalyticsQueries["Analytics Queries (analytics_queries.sql)\n• Infrastructure Deficit Analysis\n• Learning Velocity & District Ranking"]
     end
 
     UI --> SW
@@ -67,6 +72,8 @@ flowchart TD
     Monitor --> API
     API --> AI
     API --> DB
+    SyncManager -.->|Syncs Edge to Central| DB
+    AnalyticsQueries -.->|Executes On| DB
 ```
 
 ### Offline-First Synchronization Flow
@@ -81,6 +88,7 @@ flowchart TD
 * **Offline Lessons & Quizzes with Background Sync:** Students can browse lessons and submit quiz answers even when disconnected; submissions queue locally and automatically sync once connectivity returns.
 * **Bilingual English & Hindi Curriculum:** Every lesson presents a 4–5 sentence simple English summary alongside a parallel Hindi summary (`हिंदी सारांश`) to bridge vernacular learning gaps.
 * **AI Lesson & Assessment Generator with Human Review:** Teachers paste chapter text to auto-generate bilingual lesson summaries and 5 curriculum-aligned MCQs with options and answers, fully editable before publishing.
+* **Dual-Storage Backend with Postgres & Fallback:** Persistent cloud database support powered by PostgreSQL (Neon) when `DATABASE_URL` is set, with automatic fallback to local JSON file storage (`data.json`) for seamless zero-config offline development.
 * **Planner Dashboard with Priority Scoring:** Administrators can review an automated 0–100 deficiency score per school factoring in internet bandwidth, network downtime, textbook/hardware shortages, and village quiz comprehension.
 * **Real-Time School Resource Tracker:** Interactive inventory table highlighting hardware and textbook deficits in red, with optimistic `+` / `-` stock adjustments persisting instantly to the backend.
 * **Live Field Connectivity Telemetry:** Devices continuously measure download throughput using 100 KB payload tests and log latency, uptime percentage, and last-seen timestamps to the planner dashboard.
@@ -115,13 +123,37 @@ flowchart TD
 * **Backend:**
   * **Runtime:** Node.js (ES Modules)
   * **Server Framework:** Express 5
-  * **Storage:** File-based JSON storage (`backend/data.json`) with auto-seeding and defensive collection migration
+  * **Storage:** PostgreSQL (Neon) when DATABASE_URL is set, with a data.json fallback for local development
+  * **Database Client:** `pg` (Pool with BIGINT / NUMERIC parsers, automatic schema initialization, and transactional seeding)
   * **AI Integration:** Google Gemini 2.5 Flash (`generativelanguage.googleapis.com`), Anthropic Claude Sonnet 4.6 (`api.anthropic.com`), Native Fetch
   * **Hosting:** Render
 
 ---
 
-## 8. Running Locally
+## 8. Relational Layer, Offline Sync & Analytics (`database/`)
+
+The repository includes a dedicated, normalized relational database engine and offline-to-central synchronization suite located in the [`database/`](database/) folder, built using pure Python 3 standard library (`sqlite3`, `uuid`, `json`, `argparse`):
+
+* **SQL Schemas in 3NF:**
+  * `database/schema.sql`: SQLite 3.x schema featuring 4 normalized tables (`schools`, `students`, `educational_resources`, `vr_learning_logs`) with primary keys, foreign keys (`ON DELETE RESTRICT`), data constraints (`CHECK`), and indexes.
+  * `database/schema_postgres.sql`: Production-ready PostgreSQL equivalent with native `UUID`, `TIMESTAMPTZ`, and `BOOLEAN` types.
+* **Offline-to-Central Transactional Sync Demo (`database/sync_manager.py`):**
+  * Demonstrates robust synchronization from edge devices to a central database across volatile rural networks.
+  * Employs explicit transaction control: `BEGIN IMMEDIATE`, nested `SAVEPOINT sp_batch` per batch, and `ROLLBACK TO sp_batch` upon mid-stream drops (`fail_after=N`).
+  * Enforces two-phase commit-then-mark ordering: local records are marked `synced_flag = 1` only *after* the central transaction commits.
+  * Guarantees idempotency via deterministic UUIDs and `ON CONFLICT (log_id) DO NOTHING`.
+* **Analytics Queries (`database/analytics_queries.sql`):**
+  * **Query 1 (Infrastructure Deficit):** Identifies critical hardware shortages per school by aggregating students and equipment in separate CTEs (preventing Cartesian join fan-out) and classifying urgency (*Critical Deficit*, *Moderate Need*, *Adequate*).
+  * **Query 2 (Learning Velocity):** Uses advanced SQL window functions (`LAG()`, 3-session moving `AVG() OVER (...)`, and `DENSE_RANK()`) to track session-over-session score gains and rank districts.
+* **Single-Command End-to-End Demo:**
+  ```bash
+  python3 database/run_demo.py
+  ```
+  Executes the full suite: creates edge/central DBs, seeds 150 VR logs, verifies atomic rollback on a simulated mid-sync drop (0 rows written to central), completes clean synchronization, confirms zero duplicates on re-sync, prints analytical reports, and verifies runtime constraint enforcement.
+
+---
+
+## 9. Running Locally
 
 ### Prerequisites
 * **Node.js:** v20.x or higher
@@ -138,6 +170,10 @@ cd GramShiksha
 cd backend
 npm install
 
+# (Optional) Use PostgreSQL by setting DATABASE_URL:
+# export DATABASE_URL="postgresql://user:password@host/database?sslmode=require"
+# If unset, the backend automatically uses data.json
+
 # (Optional) Add your API key for live AI generation in backend/.env
 # This file is strictly gitignored and must never be committed:
 # echo "GEMINI_API_KEY=your_gemini_api_key_here" >> .env
@@ -147,7 +183,8 @@ npm install
 npm run dev
 ```
 * The API server will start on `http://localhost:4000`.
-* If no API key is provided, the AI lesson generator runs in **Demo Mode** with realistic offline mock curriculum.
+* If `DATABASE_URL` is provided, it logs `"Using PostgreSQL"` and initializes tables; otherwise it logs `"Using data.json"`.
+* If no AI API key is provided, the lesson generator runs in **Demo Mode** with realistic offline mock curriculum.
 
 ### Step 3: Start the Frontend
 In a new terminal window:
@@ -161,7 +198,7 @@ npm run dev
 
 ---
 
-## 9. Demo Walkthrough
+## 10. Demo Walkthrough
 
 Experience the complete end-to-end GramShiksha workflow in 5 steps:
 
@@ -191,17 +228,20 @@ Experience the complete end-to-end GramShiksha workflow in 5 steps:
 
 ---
 
-## 10. Roadmap & Future Work
+## 11. Roadmap & Future Work
 
-The following enhancements are actively planned for future development:
-* **SQLite Embedded Device Database:** Transition from in-memory localStorage to an embedded SQLite client database for local persistence across thousands of multi-grade lesson modules.
-* **Central Ministry Database Sync:** Multi-master transactional synchronization engine connecting village nodes to state and national DoSEL data warehouses.
+### Implemented
+* [x] **Central Database Persistence:** Integrated PostgreSQL (Neon) persistence when `DATABASE_URL` is set, with a `data.json` fallback for local offline development, connection pooling, and automatic schema initialization via `backend/db.js`.
+* [x] **Relational Schema, Offline Sync & Analytics (`database/`):** 3NF relational data layer with SQLite & PostgreSQL schemas, ACID transactional synchronization demo with mid-sync rollback protection, and window-function analytical queries.
+
+### Planned Enhancements
+* **SQLite Embedded Device Database:** Transition from in-memory localStorage to an embedded SQLite client database for local persistence across thousands of multi-grade lesson modules on edge hardware.
 * **Unity Cardboard VR Science Lab:** Offline WebXR / Google Cardboard virtual science experiment modules for low-cost Android smartphones without dedicated lab apparatus.
 * **Adaptive AI Tutor:** Micro-model on-device personalization adapting quiz difficulty and Hindi explanations based on student error patterns.
 * **SMS & Ultra-Low-Bandwidth Modes:** Two-way SMS/USSD quiz submission channels for remote tribal areas with zero packet data coverage.
 
 ---
 
-## 11. License
+## 12. License
 
 Licensed under the [MIT License](LICENSE). Developed for rural public education infrastructure.
