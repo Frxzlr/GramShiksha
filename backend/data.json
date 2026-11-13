@@ -840,6 +840,48 @@
       "rttMs": 15,
       "online": true,
       "at": 1794606109787
+    },
+    {
+      "village": "Dholera",
+      "mbps": 136.23,
+      "rttMs": 7,
+      "online": true,
+      "at": 1794606230466
+    },
+    {
+      "village": "Dholera",
+      "mbps": 82.86,
+      "rttMs": 20,
+      "online": true,
+      "at": 1794606350484
+    },
+    {
+      "village": "Dholera",
+      "mbps": 94.56,
+      "rttMs": 13,
+      "online": true,
+      "at": 1794606470475
+    },
+    {
+      "village": "Dholera",
+      "mbps": 111.63,
+      "rttMs": 14,
+      "online": true,
+      "at": 1794606590475
+    },
+    {
+      "village": "Dholera",
+      "mbps": 108.62,
+      "rttMs": 16,
+      "online": true,
+      "at": 1794606710478
+    },
+    {
+      "village": "Dholera",
+      "mbps": 110.1,
+      "rttMs": 9,
+      "online": true,
+      "at": 1794606830469
     }
   ]
 }
