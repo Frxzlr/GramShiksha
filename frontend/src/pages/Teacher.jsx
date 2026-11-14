@@ -1,4 +1,16 @@
 import { useState } from 'react'
+import {
+  Sparkles,
+  Wand2,
+  Send,
+  CheckCircle2,
+  AlertTriangle,
+  Trash2,
+} from 'lucide-react'
+import { Card } from '../components/Card'
+import { Button } from '../components/Button'
+import { Badge } from '../components/Badge'
+import { Skeleton } from '../components/Skeleton'
 
 const fetchApi = async (url, options) => {
   try {
@@ -130,7 +142,7 @@ export default function Teacher() {
         throw new Error('Failed to publish lesson. Teachers need to be online.')
       }
 
-      setSuccessMessage('Lesson published successfully! Students can now access it.')
+      setSuccessMessage('Lesson published successfully! Students can now access it offline.')
       setGeneratedLesson(null)
       setChapterText('')
     } catch (err) {
@@ -142,72 +154,78 @@ export default function Teacher() {
   }
 
   const isTextTooShort = chapterText.trim().length < 40
+  const activeStep = generatedLesson ? 2 : 1
 
   return (
     <div className="w-full space-y-6 text-left">
-      {/* Header & Input Card */}
-      <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-8 border border-green-100 space-y-5">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
-            AI Lesson Generator
-          </h2>
-          <p className="text-sm sm:text-base text-gray-600 mt-1">
-            Paste textbook paragraphs or chapter notes to automatically generate a
-            bilingual lesson and 5-question comprehension quiz tailored for classes 6–8.
-          </p>
+      {/* Two-step Indicator Header */}
+      <div className="glass-card gradient-border rounded-2xl p-5 sm:p-6 relative overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.06] dark:border-white/[0.06] border-slate-200/80 pb-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Badge variant="purple" size="sm" icon={Sparkles}>
+                AI-assisted Studio
+              </Badge>
+              <Badge variant="emerald" size="sm">
+                Classes 6–8
+              </Badge>
+            </div>
+            <h2 className="font-heading text-xl sm:text-2xl font-extrabold tracking-tight dark:text-white text-slate-900">
+              AI Curriculum & Assessment Studio
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-400">
+              Transform raw chapter passages into bilingual learning cards with instant comprehension quizzes.
+            </p>
+          </div>
         </div>
 
-        {/* Form to paste text */}
-        <form onSubmit={handleGenerate} className="space-y-4">
-          <div>
-            <label
-              htmlFor="chapter-text"
-              className="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2"
-            >
-              Chapter / Textbook Content:
-            </label>
-            <textarea
-              id="chapter-text"
-              rows={8}
-              value={chapterText}
-              onChange={(e) => setChapterText(e.target.value)}
-              placeholder="Paste textbook excerpt or chapter text here (at least 40 characters)..."
-              className="w-full rounded-2xl border-2 border-gray-200 p-4 text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder:text-gray-400 leading-relaxed bg-green-50/20"
-            />
-            <div className="flex justify-between items-center text-xs sm:text-sm text-gray-500 font-medium mt-1.5 px-1">
-              <span>Minimum 40 characters</span>
-              <span>{chapterText.trim().length} / 8000</span>
+        {/* Step Progress Indicators */}
+        <div className="grid grid-cols-2 gap-3 pt-4">
+          <div
+            className={`p-3 rounded-xl border transition-all flex items-center gap-3 ${
+              activeStep === 1
+                ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400'
+                : 'bg-white/[0.02] border-white/10 text-slate-400 opacity-70'
+            }`}
+          >
+            <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs flex items-center justify-center shrink-0">
+              1
+            </span>
+            <div className="min-w-0">
+              <span className="text-xs font-bold block truncate">1 Paste Content</span>
+              <span className="text-[11px] text-slate-400 hidden sm:block">Input raw syllabus notes</span>
             </div>
           </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading || isTextTooShort}
-              className="w-full sm:w-auto min-h-[48px] px-8 py-3 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 text-white font-semibold text-base rounded-xl shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-2.5"
-            >
-              {loading ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Generating...</span>
-                </>
-              ) : (
-                'Generate lesson + quiz'
-              )}
-            </button>
+          <div
+            className={`p-3 rounded-xl border transition-all flex items-center gap-3 ${
+              activeStep === 2
+                ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400'
+                : 'bg-white/[0.02] border-white/10 text-slate-400 opacity-70'
+            }`}
+          >
+            <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs flex items-center justify-center shrink-0">
+              2
+            </span>
+            <div className="min-w-0">
+              <span className="text-xs font-bold block truncate">2 Review & Publish</span>
+              <span className="text-[11px] text-slate-400 hidden sm:block">Human-in-the-loop audit</span>
+            </div>
           </div>
-        </form>
+        </div>
       </div>
 
-      {/* Notifications */}
+      {/* Inline Feedback Alerts */}
       {error && (
-        <div className="bg-red-50 border-2 border-red-200 text-red-900 p-4 sm:p-5 rounded-2xl text-base font-medium flex items-center justify-between shadow-xs">
-          <span>{error}</span>
+        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 flex items-center justify-between gap-3 text-sm font-medium">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+            <span>{error}</span>
+          </div>
           <button
             type="button"
             onClick={() => setError(null)}
-            className="min-h-[44px] min-w-[44px] text-red-600 hover:text-red-800 font-bold text-xl flex items-center justify-center"
-            aria-label="Dismiss error"
+            className="w-7 h-7 rounded-lg hover:bg-rose-500/20 flex items-center justify-center cursor-pointer text-base"
           >
             ×
           </button>
@@ -215,38 +233,107 @@ export default function Teacher() {
       )}
 
       {successMessage && (
-        <div className="bg-green-100 border-2 border-green-300 text-green-950 p-4 sm:p-5 rounded-2xl text-base font-semibold flex items-center justify-between shadow-xs">
-          <span>✓ {successMessage}</span>
-          <button
-            type="button"
+        <div className="p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-center justify-between gap-3 text-sm font-semibold shadow-lg shadow-emerald-500/5">
+          <div className="flex items-center gap-2.5">
+            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+            <span>{successMessage}</span>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setSuccessMessage(null)}
-            className="min-h-[44px] min-w-[44px] text-green-700 hover:text-green-900 font-bold text-xl flex items-center justify-center"
-            aria-label="Dismiss success message"
           >
-            ×
-          </button>
+            Create Another
+          </Button>
         </div>
       )}
 
-      {/* Editable Preview Card */}
-      {generatedLesson && (
-        <div className="bg-white rounded-2xl shadow-sm p-6 sm:p-8 border border-green-100 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-4">
+      {/* Step 1: Input Form (when not reviewing or generating) */}
+      {!generatedLesson && !loading && (
+        <Card className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label
+              htmlFor="chapter-text"
+              className="text-xs font-bold uppercase tracking-wider text-slate-400"
+            >
+              Chapter / Textbook Passage:
+            </label>
+            <span className="text-xs text-slate-500 font-mono">
+              {chapterText.trim().length} / 8000 chars
+            </span>
+          </div>
+
+          <form onSubmit={handleGenerate} className="space-y-4">
+            <textarea
+              id="chapter-text"
+              rows={8}
+              value={chapterText}
+              onChange={(e) => setChapterText(e.target.value)}
+              placeholder="Paste English or Hindi chapter excerpts here (minimum 40 characters required for AI analysis)..."
+              className="w-full rounded-2xl border border-white/10 dark:border-white/10 border-slate-300 bg-white/[0.02] dark:bg-white/[0.02] bg-slate-50 p-4 text-sm sm:text-base dark:text-white text-slate-900 focus:outline-none focus:border-emerald-500 transition-colors placeholder:text-slate-500 leading-relaxed font-sans"
+            />
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+              <span className="text-xs text-slate-400">
+                Supports NCERT science, environmental studies, and mathematics chapters.
+              </span>
+
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+                disabled={isTextTooShort}
+                icon={Wand2}
+                className="w-full sm:w-auto"
+              >
+                Generate lesson + quiz
+              </Button>
+            </div>
+          </form>
+        </Card>
+      )}
+
+      {/* Skeleton Shimmer While Generating */}
+      {loading && (
+        <Card className="space-y-6">
+          <div className="flex items-center gap-3">
+            <Skeleton className="w-8 h-8 rounded-xl" />
+            <div className="space-y-2 flex-1">
+              <Skeleton className="h-5 w-48 rounded-lg" />
+              <Skeleton className="h-3 w-32 rounded-lg" />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+          </div>
+
+          <div className="space-y-4 pt-4 border-t border-white/[0.06]">
+            <Skeleton className="h-4 w-40 rounded-lg" />
+            <Skeleton className="h-16 w-full rounded-xl" />
+            <Skeleton className="h-16 w-full rounded-xl" />
+          </div>
+        </Card>
+      )}
+
+      {/* Step 2: Editable Preview & Publish Card */}
+      {generatedLesson && !loading && (
+        <Card className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.06] dark:border-white/[0.06] border-slate-200/80 pb-4">
             <div>
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+              <h3 className="font-heading text-lg sm:text-xl font-bold dark:text-white text-slate-900">
                 Lesson Preview & Editor
               </h3>
-              <p className="text-sm text-gray-600 mt-1">
-                Review and refine the generated lesson before publishing to students.
+              <p className="text-xs text-slate-400">
+                Verify bilingual accuracy and quiz questions before saving to the student catalog.
               </p>
             </div>
 
-            {/* Amber notice if demo/mocked */}
             {generatedLesson.mocked && (
-              <div className="bg-amber-50 border-2 border-amber-300 text-amber-900 px-4 py-2 rounded-xl text-sm font-semibold self-start sm:self-auto flex items-center gap-2 shadow-xs">
-                <span>⚠️</span>
-                <span>Demo mode: no AI key found, showing a sample lesson.</span>
-              </div>
+              <Badge variant="amber" size="sm" icon={AlertTriangle}>
+                Demo Mode: Sample Lesson
+              </Badge>
             )}
           </div>
 
@@ -254,7 +341,7 @@ export default function Teacher() {
           <div className="space-y-1.5">
             <label
               htmlFor="lesson-title"
-              className="block text-xs sm:text-sm font-bold text-gray-700 uppercase tracking-wider"
+              className="text-xs font-bold uppercase tracking-wider text-slate-400"
             >
               Lesson Title:
             </label>
@@ -263,7 +350,7 @@ export default function Teacher() {
               type="text"
               value={generatedLesson.title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              className="w-full min-h-[48px] rounded-xl border-2 border-gray-200 px-4 py-2.5 text-lg font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 bg-green-50/20"
+              className="w-full min-h-[44px] rounded-xl border border-white/10 dark:border-white/10 border-slate-300 bg-white/[0.03] px-4 py-2 text-base font-bold dark:text-white text-slate-900 focus:outline-none focus:border-emerald-500"
             />
           </div>
 
@@ -271,7 +358,7 @@ export default function Teacher() {
           <div className="space-y-1.5">
             <label
               htmlFor="lesson-summary"
-              className="block text-xs sm:text-sm font-bold text-gray-700 uppercase tracking-wider"
+              className="text-xs font-bold uppercase tracking-wider text-slate-400"
             >
               English Summary (4–5 sentences):
             </label>
@@ -280,7 +367,7 @@ export default function Teacher() {
               rows={4}
               value={generatedLesson.summary}
               onChange={(e) => handleSummaryChange(e.target.value)}
-              className="w-full rounded-xl border-2 border-gray-200 p-4 text-base text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 leading-relaxed bg-green-50/20"
+              className="w-full rounded-xl border border-white/10 dark:border-white/10 border-slate-300 bg-white/[0.03] p-4 text-sm sm:text-base dark:text-slate-200 text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
             />
           </div>
 
@@ -288,32 +375,33 @@ export default function Teacher() {
           <div className="space-y-1.5">
             <label
               htmlFor="lesson-summary-hi"
-              className="block text-xs sm:text-sm font-bold text-gray-700 uppercase tracking-wider"
+              className="text-xs font-bold uppercase tracking-wider text-slate-400"
             >
               हिंदी सारांश (Hindi Summary):
             </label>
             <textarea
               id="lesson-summary-hi"
               rows={4}
+              lang="hi"
               value={generatedLesson.summary_hi}
               onChange={(e) => handleSummaryHiChange(e.target.value)}
-              className="w-full rounded-xl border-2 border-gray-200 p-4 text-base text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 leading-relaxed bg-green-50/20"
+              className="w-full rounded-xl border border-white/10 dark:border-white/10 border-slate-300 bg-white/[0.03] p-4 text-sm sm:text-base dark:text-slate-200 text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed font-devanagari"
             />
           </div>
 
           {/* 5 Questions */}
-          <div className="space-y-6 pt-3">
-            <h4 className="text-lg sm:text-xl font-bold text-gray-900 border-b border-gray-100 pb-2">
-              Comprehension Quiz (5 Questions)
+          <div className="space-y-5 pt-3">
+            <h4 className="font-heading text-base font-bold dark:text-white text-slate-900 border-b border-white/[0.06] pb-2">
+              Comprehension Questions (5 MCQs)
             </h4>
 
             {generatedLesson.quiz?.map((qItem, qIdx) => (
               <div
                 key={qIdx}
-                className="p-5 bg-green-50/30 rounded-2xl border border-green-200/80 space-y-4"
+                className="p-4 sm:p-5 rounded-xl border border-white/[0.08] dark:border-white/[0.08] border-slate-200 bg-white/[0.02] space-y-4"
               >
-                <div className="flex items-center gap-3">
-                  <span className="w-8 h-8 rounded-full bg-green-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-6 h-6 rounded-md bg-emerald-500/15 text-emerald-400 font-bold text-xs flex items-center justify-center shrink-0">
                     {qIdx + 1}
                   </span>
                   <input
@@ -321,24 +409,24 @@ export default function Teacher() {
                     value={qItem.q}
                     onChange={(e) => handleQuestionChange(qIdx, e.target.value)}
                     placeholder={`Question ${qIdx + 1}`}
-                    className="flex-1 min-h-[44px] rounded-xl border-2 border-gray-200 bg-white px-4 py-2 text-base font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="flex-1 min-h-[40px] rounded-lg border border-white/10 bg-white/[0.02] px-3 py-1.5 text-sm font-semibold dark:text-white text-slate-900 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 {/* 3 Options */}
-                <div className="space-y-3 sm:pl-11">
-                  <p className="text-xs sm:text-sm font-semibold text-gray-600">
-                    Choose the correct answer with the radio button:
-                  </p>
+                <div className="space-y-2.5 sm:pl-8">
+                  <span className="text-[11px] text-slate-400 font-medium block">
+                    Select the radio button marking the correct answer:
+                  </span>
                   {qItem.options?.map((opt, optIdx) => (
-                    <div key={optIdx} className="flex items-center gap-3">
+                    <div key={optIdx} className="flex items-center gap-2.5">
                       <input
                         type="radio"
                         id={`q-${qIdx}-opt-${optIdx}`}
                         name={`correct-answer-${qIdx}`}
                         checked={qItem.answer === optIdx}
                         onChange={() => handleAnswerChange(qIdx, optIdx)}
-                        className="w-5 h-5 text-green-600 focus:ring-green-500 cursor-pointer shrink-0"
+                        className="w-4 h-4 text-emerald-500 accent-emerald-500 cursor-pointer shrink-0"
                       />
                       <input
                         type="text"
@@ -347,10 +435,10 @@ export default function Teacher() {
                           handleOptionChange(qIdx, optIdx, e.target.value)
                         }
                         placeholder={`Option ${optIdx + 1}`}
-                        className={`flex-1 min-h-[44px] rounded-xl border-2 px-4 py-2 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-green-500 ${
+                        className={`flex-1 min-h-[40px] rounded-lg border px-3 py-1.5 text-sm dark:text-slate-200 text-slate-800 bg-white/[0.02] focus:outline-none focus:border-emerald-500 ${
                           qItem.answer === optIdx
-                            ? 'border-green-600 bg-green-50/50 font-semibold ring-1 ring-green-600/30'
-                            : 'border-gray-200'
+                            ? 'border-emerald-500/60 bg-emerald-500/10 font-semibold'
+                            : 'border-white/10'
                         }`}
                       />
                     </div>
@@ -360,32 +448,29 @@ export default function Teacher() {
             ))}
           </div>
 
-          {/* Publish action bar */}
-          <div className="pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3">
-            <button
-              type="button"
+          {/* Action Footer */}
+          <div className="pt-4 border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-3">
+            <Button
+              variant="ghost"
+              size="md"
+              icon={Trash2}
               onClick={() => setGeneratedLesson(null)}
-              className="min-h-[44px] px-6 py-2.5 text-base text-gray-700 hover:text-gray-900 hover:bg-gray-100 font-semibold rounded-xl transition cursor-pointer"
             >
-              Discard
-            </button>
-            <button
-              type="button"
+              Discard Draft
+            </Button>
+
+            <Button
+              variant="primary"
+              size="md"
+              icon={Send}
               onClick={handlePublish}
-              disabled={publishing}
-              className="w-full sm:w-auto min-h-[48px] px-8 py-3 bg-green-600 hover:bg-green-700 disabled:opacity-50 active:scale-95 text-white font-semibold text-base rounded-xl shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-2"
+              loading={publishing}
+              className="w-full sm:w-auto"
             >
-              {publishing ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Publishing...</span>
-                </>
-              ) : (
-                'Publish to students'
-              )}
-            </button>
+              Publish to students
+            </Button>
           </div>
-        </div>
+        </Card>
       )}
     </div>
   )
