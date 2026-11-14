@@ -9,24 +9,25 @@ export function EmptyState({
 }) {
   return (
     <div
-      className={`glass-card rounded-2xl p-8 sm:p-12 text-center flex flex-col items-center justify-center max-w-lg mx-auto ${className}`}
+      className={`bg-[#111214] dark:bg-[#111214] bg-white border border-white/[0.08] dark:border-white/[0.08] border-slate-200 rounded-[8px] p-8 text-center flex flex-col items-center justify-center max-w-md mx-auto ${className}`}
     >
       {Icon && (
-        <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/5">
-          <Icon className="w-7 h-7" />
+        <div className="w-9 h-9 rounded-[6px] bg-white/[0.04] dark:bg-white/[0.04] bg-slate-100 border border-white/[0.08] dark:border-white/[0.08] border-slate-200 text-slate-400 flex items-center justify-center mb-3">
+          <Icon className="w-4 h-4" />
         </div>
       )}
       {title && (
-        <h3 className="font-heading text-lg sm:text-xl font-bold dark:text-white text-slate-900 tracking-tight">
+        <h3 className="text-[14px] font-semibold text-white dark:text-white text-slate-900">
           {title}
         </h3>
       )}
       {description && (
-        <p className="text-sm dark:text-slate-400 text-slate-600 mt-1.5 max-w-sm leading-relaxed">
+        <p className="text-[13px] text-slate-400 dark:text-slate-400 text-slate-600 mt-1 max-w-sm">
           {description}
         </p>
       )}
-      {action && <div className="mt-6">{action}</div>}
+      {action && <div className="mt-4">{action}</div>}
     </div>
   )
 }
+

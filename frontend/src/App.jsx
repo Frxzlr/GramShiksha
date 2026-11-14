@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react'
 import {
-  GraduationCap,
+  BookOpen,
   LayoutDashboard,
   Package,
-  Sparkles,
+  FileEdit,
   Video,
   Sun,
   Moon,
-  Check,
-  RefreshCw,
-  MapPin,
   ChevronDown,
+  PanelLeftClose,
+  PanelLeft,
 } from 'lucide-react'
 import Student from './pages/Student'
 import Planner from './pages/Planner'
@@ -19,13 +18,30 @@ import Teacher from './pages/Teacher'
 import LiveClass from './pages/LiveClass'
 import { startMonitoring } from './lib/connectivity'
 
-const TABS = [
-  { id: 'Student', label: 'Student', icon: GraduationCap },
-  { id: 'Planner', label: 'Planner', icon: LayoutDashboard },
-  { id: 'Resources', label: 'Resources', icon: Package },
-  { id: 'Teacher', label: 'Teacher', icon: Sparkles },
-  { id: 'Live Class', label: 'Live Class', icon: Video },
+const NAV_GROUPS = [
+  {
+    group: 'Learn',
+    items: [
+      { id: 'Student', label: 'Student', icon: BookOpen },
+      { id: 'Live Class', label: 'Live Class', icon: Video },
+    ],
+  },
+  {
+    group: 'Manage',
+    items: [
+      { id: 'Teacher', label: 'Teacher', icon: FileEdit },
+      { id: 'Resources', label: 'Resources', icon: Package },
+    ],
+  },
+  {
+    group: 'Insights',
+    items: [
+      { id: 'Planner', label: 'Planner', icon: LayoutDashboard },
+    ],
+  },
 ]
+
+const ALL_TABS = NAV_GROUPS.flatMap((g) => g.items)
 
 const SEEDED_VILLAGES = [
   'Malegaon Khurd',
@@ -40,11 +56,13 @@ const SEEDED_VILLAGES = [
 
 export default function App() {
   const [tab, setTab] = useState('Student')
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [isOnline, setIsOnline] = useState(
     typeof navigator !== 'undefined' ? navigator.onLine : true
   )
   const [syncStatus, setSyncStatus] = useState('synced')
   const [speed, setSpeed] = useState(null)
+  const [pendingCount, setPendingCount] = useState(0)
   const [village, setVillage] = useState(() => {
     try {
       return localStorage.getItem('gs_village') || 'Malegaon Khurd'
@@ -90,6 +108,22 @@ export default function App() {
         localStorage.setItem('gs_village', 'Malegaon Khurd')
       }
     } catch {}
+  }, [])
+
+  // Poll pending queue count
+  useEffect(() => {
+    const updatePending = () => {
+      try {
+        const raw = localStorage.getItem('gs_connectivity_queue')
+        const arr = raw ? JSON.parse(raw) : []
+        setPendingCount(Array.isArray(arr) ? arr.length : 0)
+      } catch {
+        setPendingCount(0)
+      }
+    }
+    updatePending()
+    const interval = setInterval(updatePending, 2000)
+    return () => clearInterval(interval)
   }, [])
 
   // Start real-time connectivity monitoring
@@ -151,200 +185,225 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0b1220] dark:bg-[#0b1220] bg-slate-50 text-slate-100 dark:text-slate-100 text-slate-900 font-sans flex flex-col md:flex-row bg-ambient-glow bg-dot-grid overflow-x-hidden">
+    <div className="min-h-screen bg-[#0a0a0b] dark:bg-[#0a0a0b] bg-[#fafafa] text-zinc-100 dark:text-zinc-100 text-zinc-900 font-sans flex flex-col md:flex-row overflow-x-hidden">
       {/* Desktop Left Sidebar (>= md) */}
-      <aside className="hidden md:flex w-64 lg:w-72 flex-col justify-between p-5 border-r border-white/[0.08] dark:border-white/[0.08] border-slate-200/80 bg-[#0b1220]/80 dark:bg-[#0b1220]/80 bg-white/80 backdrop-blur-2xl sticky top-0 h-screen z-40 shrink-0">
-        <div className="space-y-6">
-          {/* Logo Mark & Tagline */}
-          <div className="flex items-center gap-3 px-2 py-1">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 p-0.5 shadow-lg shadow-emerald-500/20 shrink-0 flex items-center justify-center">
-              <div className="w-full h-full bg-[#0b1220] rounded-[10px] flex items-center justify-center">
-                <span className="font-heading font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 text-lg">
-                  ग
+      <aside
+        className={`hidden md:flex flex-col justify-between border-r border-white/[0.08] dark:border-white/[0.08] border-zinc-200 bg-[#0a0a0b] dark:bg-[#0a0a0b] bg-white sticky top-0 h-screen z-40 shrink-0 transition-[width] duration-150 ${
+          sidebarCollapsed ? 'w-[60px]' : 'w-[240px]'
+        }`}
+      >
+        <div className="flex flex-col flex-1 min-h-0">
+          {/* Sidebar Top: Wordmark & Collapse Toggle */}
+          <div className="h-14 flex items-center justify-between px-3.5 border-b border-white/[0.08] dark:border-white/[0.08] border-zinc-200 shrink-0">
+            {!sidebarCollapsed ? (
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-5 h-5 rounded-[4px] bg-[#22c55e] flex items-center justify-center text-[11px] font-bold text-black font-mono shrink-0 select-none">
+                  G
+                </div>
+                <span className="text-[14px] font-semibold tracking-tight text-white dark:text-white text-zinc-900 truncate">
+                  GramShiksha
                 </span>
               </div>
-            </div>
-            <div className="min-w-0">
-              <h1 className="font-heading text-lg font-bold tracking-tight text-white dark:text-white text-slate-900 leading-tight">
-                GramShiksha
-              </h1>
-              <p className="text-[11px] text-slate-400 dark:text-slate-400 text-slate-500 font-medium truncate">
-                Learning without limits
-              </p>
-            </div>
+            ) : (
+              <div className="w-5 h-5 mx-auto rounded-[4px] bg-[#22c55e] flex items-center justify-center text-[11px] font-bold text-black font-mono shrink-0 select-none">
+                G
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              className="p-1 rounded-[4px] text-zinc-400 hover:text-white dark:hover:text-white hover:text-zinc-900 hover:bg-white/[0.05] dark:hover:bg-white/[0.05] hover:bg-zinc-100 transition-colors cursor-pointer"
+            >
+              {sidebarCollapsed ? (
+                <PanelLeft className="w-4 h-4" />
+              ) : (
+                <PanelLeftClose className="w-4 h-4" />
+              )}
+            </button>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="space-y-1.5" aria-label="Sidebar Navigation">
-            {TABS.map((t) => {
-              const Icon = t.icon
-              const isActive = tab === t.id
-              return (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => setTab(t.id)}
-                  className={`w-full min-h-[44px] px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 flex items-center gap-3 cursor-pointer select-none text-left ${
-                    isActive
-                      ? 'bg-gradient-to-r from-emerald-500/15 to-cyan-500/10 text-emerald-400 dark:text-emerald-400 text-emerald-600 border border-emerald-500/30 shadow-xs font-semibold'
-                      : 'text-slate-400 dark:text-slate-400 text-slate-600 hover:text-white dark:hover:text-white hover:text-slate-900 hover:bg-white/[0.04] dark:hover:bg-white/[0.04] hover:bg-slate-100 border border-transparent'
-                  }`}
-                >
-                  <Icon
-                    className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
-                      isActive ? 'scale-110 text-emerald-400' : ''
-                    }`}
-                  />
-                  <span>{t.label}</span>
-                  {isActive && (
-                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400" />
-                  )}
-                </button>
-              )
-            })}
+          {/* Grouped Navigation Links */}
+          <nav className="flex-1 overflow-y-auto p-2 space-y-4" aria-label="Sidebar Navigation">
+            {NAV_GROUPS.map((group) => (
+              <div key={group.group} className="space-y-0.5">
+                {!sidebarCollapsed && (
+                  <div className="px-2.5 py-1 text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-500 text-zinc-400 select-none">
+                    {group.group}
+                  </div>
+                )}
+                {group.items.map((item) => {
+                  const Icon = item.icon
+                  const isActive = tab === item.id
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setTab(item.id)}
+                      title={sidebarCollapsed ? item.label : undefined}
+                      className={`w-full min-h-[36px] px-2.5 py-1.5 rounded-[4px] text-[13px] font-medium transition-colors flex items-center gap-2.5 cursor-pointer select-none text-left ${
+                        isActive
+                          ? 'bg-white/[0.05] dark:bg-white/[0.05] bg-zinc-100 text-white dark:text-white text-zinc-900 border-l-2 border-[#22c55e]'
+                          : 'text-zinc-400 dark:text-zinc-400 text-zinc-600 hover:text-white dark:hover:text-white hover:text-zinc-900 hover:bg-white/[0.02] dark:hover:bg-white/[0.02] hover:bg-zinc-50 border-l-2 border-transparent'
+                      } ${sidebarCollapsed ? 'justify-center px-0' : ''}`}
+                    >
+                      <Icon className="w-4 h-4 shrink-0 text-current" />
+                      {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
+                    </button>
+                  )
+                })}
+              </div>
+            ))}
           </nav>
         </div>
 
-        {/* Sidebar Footer: Village Selector & Status */}
-        <div className="pt-4 border-t border-white/[0.08] dark:border-white/[0.08] border-slate-200 space-y-3">
-          <div className="bg-white/[0.03] dark:bg-white/[0.03] bg-slate-100/70 p-3 rounded-xl border border-white/[0.06] dark:border-white/[0.06] border-slate-200 space-y-1.5">
-            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <MapPin className="w-3 h-3 text-emerald-400" /> Assigned Village
-            </span>
-            <div className="relative">
-              <select
-                value={village}
-                onChange={handleVillageChange}
-                className="w-full bg-transparent text-sm font-semibold dark:text-white text-slate-900 pr-6 focus:outline-none cursor-pointer appearance-none"
-                aria-label="Village Selector"
-              >
-                {SEEDED_VILLAGES.map((v) => (
-                  <option key={v} value={v} className="bg-[#111a2e] text-white">
-                    {v}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Container */}
-      <div className="flex-1 flex flex-col min-w-0 pb-20 md:pb-8">
-        {/* Sticky Top Bar */}
-        <header className="sticky top-0 z-30 bg-[#0b1220]/80 dark:bg-[#0b1220]/80 bg-white/80 backdrop-blur-xl border-b border-white/[0.08] dark:border-white/[0.08] border-slate-200/80 px-4 sm:px-6 py-3">
-          <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-            {/* Mobile Logo Mark (< md) */}
-            <div className="flex md:hidden items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-cyan-500 p-0.5 shrink-0 flex items-center justify-center">
-                <div className="w-full h-full bg-[#0b1220] rounded-[6px] flex items-center justify-center">
-                  <span className="font-heading font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 text-sm">
-                    ग
-                  </span>
+        {/* Sidebar Footer: Village Selector & System Telemetry */}
+        <div className="p-3 border-t border-white/[0.08] dark:border-white/[0.08] border-zinc-200 shrink-0 space-y-2.5 bg-[#0a0a0b] dark:bg-[#0a0a0b] bg-white">
+          {!sidebarCollapsed ? (
+            <>
+              {/* Village Selector */}
+              <div className="space-y-1">
+                <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-500 text-zinc-400">
+                  Village
+                </div>
+                <div className="relative">
+                  <select
+                    value={village}
+                    onChange={handleVillageChange}
+                    className="w-full h-8 pl-2 pr-6 rounded-[4px] bg-white/[0.04] dark:bg-white/[0.04] bg-zinc-100 border border-white/[0.08] dark:border-white/[0.08] border-zinc-200 text-[12px] font-medium text-white dark:text-white text-zinc-900 focus:outline-none focus:ring-1 focus:ring-[#22c55e] cursor-pointer appearance-none truncate"
+                    aria-label="Assigned Village"
+                  >
+                    {SEEDED_VILLAGES.map((v) => (
+                      <option key={v} value={v} className="bg-[#111214] text-white">
+                        {v}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 text-zinc-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </div>
-              <span className="font-heading text-base font-bold tracking-tight dark:text-white text-slate-900">
-                GramShiksha
-              </span>
-            </div>
 
-            {/* Current Active Tab Title on Desktop */}
-            <div className="hidden md:flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold">
-                Platform /
-              </span>
-              <span className="font-heading text-sm font-bold text-white dark:text-white text-slate-900">
-                {tab}
-              </span>
-            </div>
-
-            {/* Right Status Controls */}
-            <div className="flex items-center gap-2 sm:gap-3 flex-wrap ml-auto">
-              {/* Mobile Village Selector */}
-              <div className="flex md:hidden items-center gap-1 bg-white/[0.06] dark:bg-white/[0.06] bg-slate-100 px-2.5 py-1.5 rounded-full border border-white/10 dark:border-white/10 border-slate-200 text-xs">
-                <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
-                <select
-                  value={village}
-                  onChange={handleVillageChange}
-                  className="bg-transparent dark:text-white text-slate-900 font-medium focus:outline-none cursor-pointer max-w-[100px] truncate"
-                  aria-label="Mobile Village Selector"
-                >
-                  {SEEDED_VILLAGES.map((v) => (
-                    <option key={v} value={v} className="bg-[#111a2e] text-white">
-                      {v}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Online/Offline Badge with Pulsing Dot */}
-              <div
-                className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold min-h-[32px] border backdrop-blur-md transition-colors ${
-                  isOnline
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                    : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-                }`}
-              >
-                <span className="relative flex h-2 w-2">
-                  {isOnline && (
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  )}
-                  <span
-                    className={`relative inline-flex rounded-full h-2 w-2 ${
-                      isOnline ? 'bg-emerald-400' : 'bg-amber-400'
-                    }`}
-                  />
-                </span>
-                <span className="flex items-center gap-1">
-                  {isOnline ? (
-                    <>
-                      <span>Online</span>
-                      {speed !== null && (
-                        <span className="text-[11px] font-mono text-cyan-400 pl-1 border-l border-emerald-500/30">
-                          {speed}M
-                        </span>
-                      )}
-                    </>
-                  ) : (
-                    <span>Offline</span>
-                  )}
-                </span>
-              </div>
-
-              {/* Sync Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/[0.04] dark:bg-white/[0.04] bg-slate-100 text-slate-300 dark:text-slate-300 text-slate-700 border border-white/10 dark:border-white/10 border-slate-200 min-h-[32px] backdrop-blur-md">
-                {syncStatus === 'syncing' ? (
-                  <>
-                    <RefreshCw className="w-3 h-3 text-cyan-400 animate-spin" />
-                    <span className="text-cyan-400">Syncing</span>
-                  </>
-                ) : (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Synced</span>
-                  </>
-                )}
+              {/* Status and Sync Rows */}
+              <div className="pt-2 border-t border-white/[0.06] dark:border-white/[0.06] border-zinc-100 space-y-1.5 text-[12px] font-mono">
+                <div className="flex items-center justify-between text-zinc-400">
+                  <span className="flex items-center gap-1.5">
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        isOnline ? 'bg-[#22c55e]' : 'bg-red-400'
+                      }`}
+                    />
+                    <span className="text-zinc-300 dark:text-zinc-300 text-zinc-700">
+                      {isOnline ? (speed !== null ? `${speed} Mbps` : 'Online') : 'Offline'}
+                    </span>
+                  </span>
+                  <span className="text-[11px] text-zinc-500">
+                    {syncStatus === 'syncing' ? 'Syncing...' : `${pendingCount} queued`}
+                  </span>
+                </div>
               </div>
 
               {/* Theme Toggle Button */}
               <button
                 type="button"
                 onClick={toggleTheme}
-                aria-label="Toggle Dark/Light Theme"
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/[0.06] dark:bg-white/[0.06] bg-slate-100 border border-white/10 dark:border-white/10 border-slate-200 text-slate-300 dark:text-slate-300 text-slate-700 hover:text-white dark:hover:text-white hover:text-slate-900 hover:bg-white/10 flex items-center justify-center transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                className="w-full h-8 rounded-[4px] border border-white/[0.08] dark:border-white/[0.08] border-zinc-200 bg-white/[0.02] dark:bg-white/[0.02] bg-zinc-50 hover:bg-white/[0.05] dark:hover:bg-white/[0.05] hover:bg-zinc-100 text-zinc-300 dark:text-zinc-300 text-zinc-700 text-[12px] font-medium flex items-center justify-between px-2.5 transition-colors cursor-pointer"
+              >
+                <span className="flex items-center gap-2">
+                  {theme === 'dark' ? (
+                    <Moon className="w-3.5 h-3.5 text-zinc-400" />
+                  ) : (
+                    <Sun className="w-3.5 h-3.5 text-amber-500" />
+                  )}
+                  <span>{theme === 'dark' ? 'Dark Theme' : 'Light Theme'}</span>
+                </span>
+                <span className="text-[10px] text-zinc-500 font-mono">⌥T</span>
+              </button>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-2">
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  isOnline ? 'bg-[#22c55e]' : 'bg-red-400'
+                }`}
+                title={isOnline ? 'Online' : 'Offline'}
+              />
+              <button
+                type="button"
+                onClick={toggleTheme}
+                title="Toggle Theme"
+                aria-label="Toggle Theme"
+                className="p-1 rounded-[4px] text-zinc-400 hover:text-white"
               >
                 {theme === 'dark' ? (
-                  <Sun className="w-4 h-4 text-amber-300" />
+                  <Moon className="w-3.5 h-3.5" />
                 ) : (
-                  <Moon className="w-4 h-4 text-slate-700" />
+                  <Sun className="w-3.5 h-3.5 text-amber-500" />
                 )}
               </button>
             </div>
+          )}
+        </div>
+      </aside>
+
+      {/* Main Container */}
+      <div className="flex-1 flex flex-col min-w-0 pb-20 md:pb-8">
+        {/* Mobile Top Bar (< md) */}
+        <header className="md:hidden sticky top-0 z-30 bg-[#0a0a0b] dark:bg-[#0a0a0b] bg-white border-b border-white/[0.08] dark:border-white/[0.08] border-zinc-200 px-4 py-2.5 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-5 h-5 rounded-[4px] bg-[#22c55e] flex items-center justify-center text-[11px] font-bold text-black font-mono shrink-0 select-none">
+              G
+            </div>
+            <span className="text-[14px] font-semibold tracking-tight text-white dark:text-white text-zinc-900">
+              GramShiksha
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Village Selector Mobile */}
+            <select
+              value={village}
+              onChange={handleVillageChange}
+              className="h-8 max-w-[120px] px-2 rounded-[4px] bg-white/[0.04] dark:bg-white/[0.04] bg-zinc-100 border border-white/[0.08] dark:border-white/[0.08] border-zinc-200 text-[11px] text-white dark:text-white text-zinc-900 font-mono truncate focus:outline-none"
+              aria-label="Assigned Village Mobile"
+            >
+              {SEEDED_VILLAGES.map((v) => (
+                <option key={v} value={v} className="bg-[#111214] text-white">
+                  {v}
+                </option>
+              ))}
+            </select>
+
+            {/* Online Status Pill */}
+            <span
+              className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-[4px] border text-[11px] font-mono ${
+                isOnline
+                  ? 'border-[#22c55e]/20 bg-[#22c55e]/10 text-[#22c55e]'
+                  : 'border-red-500/20 bg-red-500/10 text-red-400'
+              }`}
+            >
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  isOnline ? 'bg-[#22c55e]' : 'bg-red-400'
+                }`}
+              />
+              <span>{isOnline ? (speed ? `${speed}M` : 'Online') : 'Offline'}</span>
+            </span>
+
+            {/* Theme Toggle Mobile */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label="Toggle Theme"
+              className="p-1.5 rounded-[4px] border border-white/[0.08] dark:border-white/[0.08] border-zinc-200 text-zinc-300 dark:text-zinc-300 text-zinc-700"
+            >
+              {theme === 'dark' ? <Moon className="w-3.5 h-3.5" /> : <Sun className="w-3.5 h-3.5 text-amber-500" />}
+            </button>
           </div>
         </header>
 
-        {/* Main Content View (max-w-6xl for high-end wide dashboard, responsive at 360px and 1280px) */}
+        {/* Main Content Area */}
         <main className="w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 flex-1">
           {tab === 'Student' && <Student onQueued={refresh} village={village} syncStatus={syncStatus} />}
           {tab === 'Planner' && <Planner theme={theme} />}
@@ -356,10 +415,10 @@ export default function App() {
 
       {/* Mobile Bottom Tab Bar (< md) */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0b1220]/95 dark:bg-[#0b1220]/95 bg-white/95 backdrop-blur-2xl border-t border-white/[0.08] dark:border-white/[0.08] border-slate-200 px-2 py-1.5 flex items-center justify-around shadow-2xl"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0b] dark:bg-[#0a0a0b] bg-white border-t border-white/[0.08] dark:border-white/[0.08] border-zinc-200 px-1 py-1 flex items-center justify-around pb-[max(env(safe-area-inset-bottom),0.25rem)]"
         aria-label="Mobile Navigation"
       >
-        {TABS.map((t) => {
+        {ALL_TABS.map((t) => {
           const Icon = t.icon
           const isActive = tab === t.id
           return (
@@ -367,20 +426,14 @@ export default function App() {
               key={t.id}
               type="button"
               onClick={() => setTab(t.id)}
-              className={`min-h-[48px] min-w-[56px] flex flex-col items-center justify-center px-2 py-1 rounded-xl transition-all duration-150 cursor-pointer ${
+              className={`min-h-[44px] min-w-[54px] flex flex-col items-center justify-center px-1.5 py-1 rounded-[4px] transition-colors cursor-pointer ${
                 isActive
-                  ? 'text-emerald-400 dark:text-emerald-400 text-emerald-600 font-semibold'
-                  : 'text-slate-400 dark:text-slate-400 text-slate-500 hover:text-slate-200'
+                  ? 'text-[#22c55e] font-semibold'
+                  : 'text-zinc-400 dark:text-zinc-400 text-zinc-500 hover:text-zinc-200'
               }`}
             >
-              <div
-                className={`p-1 rounded-lg transition-transform ${
-                  isActive ? 'bg-emerald-500/10 scale-105' : ''
-                }`}
-              >
-                <Icon className="w-5 h-5" />
-              </div>
-              <span className="text-[10px] tracking-tight mt-0.5 truncate max-w-[64px]">
+              <Icon className="w-4 h-4" />
+              <span className="text-[10px] tracking-tight mt-0.5 truncate max-w-[58px]">
                 {t.label}
               </span>
             </button>
@@ -390,3 +443,4 @@ export default function App() {
     </div>
   )
 }
+

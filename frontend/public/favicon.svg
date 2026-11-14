@@ -1,26 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
-  <defs>
-    <linearGradient id="gs-grad-primary" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#10b981" />
-      <stop offset="50%" stop-color="#06b6d4" />
-      <stop offset="100%" stop-color="#3b82f6" />
-    </linearGradient>
-    <linearGradient id="gs-grad-glow" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#10b981" stop-opacity="0.6" />
-      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.1" />
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="128" fill="#0b1220" />
-  <rect width="510" height="510" x="1" y="1" rx="127" stroke="url(#gs-grad-glow)" stroke-width="2" />
-  <circle cx="256" cy="256" r="140" fill="url(#gs-grad-glow)" opacity="0.3" />
-  <g transform="translate(256 260) scale(1.15) translate(-256 -260)">
-    <path d="M246 156 C200 136, 140 148, 108 176 C96 186, 88 202, 88 220 L88 348 C88 360, 98 368, 110 366 C144 354, 196 346, 246 364 Z" 
-          fill="url(#gs-grad-primary)" fill-opacity="0.9" />
-    <path d="M266 156 C312 136, 372 148, 404 176 C416 186, 424 202, 424 220 L424 348 C424 360, 414 368, 402 366 C368 354, 316 346, 266 364 Z" 
-          fill="url(#gs-grad-primary)" />
-    <path d="M256 120 L274 152 L256 184 L238 152 Z" fill="#ffffff" />
-    <path d="M256 198 L264 362 L256 370 L248 362 Z" fill="#ffffff" fill-opacity="0.8" />
-    <path d="M204 100 C236 84, 276 84, 308 100" stroke="#06b6d4" stroke-width="12" stroke-linecap="round" fill="none" opacity="0.9" />
-    <path d="M172 70 C224 46, 288 46, 340 70" stroke="#10b981" stroke-width="12" stroke-linecap="round" fill="none" opacity="0.6" />
-  </g>
+  <rect width="512" height="512" rx="64" fill="#0a0a0b" />
+  <rect width="510" height="510" x="1" y="1" rx="63" stroke="rgba(255, 255, 255, 0.08)" stroke-width="2" />
+  <path d="M 336 216 L 336 176 C 336 153.9 318.1 136 296 136 L 216 136 C 171.8 136 136 171.8 136 216 L 136 296 C 136 340.2 171.8 376 216 376 L 296 376 C 318.1 376 336 358.1 336 336 L 336 276 L 246 276 L 246 312 L 296 312 L 296 332 C 296 334.2 294.2 336 292 336 L 216 336 C 193.9 336 176 318.1 176 296 L 176 216 C 176 193.9 193.9 176 216 176 L 292 176 C 294.2 176 296 177.8 296 180 L 296 216 Z" fill="#22c55e" />
+  <rect x="360" y="136" width="16" height="240" rx="4" fill="#22c55e" opacity="0.3" />
 </svg>

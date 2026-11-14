@@ -4,19 +4,14 @@ export function Card({
   children,
   className = '',
   hover = false,
-  glow = false,
   as: Component = 'div',
   ...props
 }) {
   return (
     <Component
-      className={`glass-card rounded-2xl p-5 sm:p-6 text-left relative overflow-hidden transition-all duration-200 ${
+      className={`bg-[#111214] dark:bg-[#111214] bg-white border border-white/[0.08] dark:border-white/[0.08] border-slate-200 rounded-[8px] p-4 sm:p-5 text-left transition-colors ${
         hover
-          ? 'hover:border-white/20 hover:shadow-xl hover:shadow-emerald-500/5 hover:-translate-y-0.5'
-          : ''
-      } ${
-        glow
-          ? 'before:absolute before:inset-0 before:bg-gradient-to-br before:from-emerald-500/5 before:to-transparent before:pointer-events-none'
+          ? 'hover:border-white/[0.14] dark:hover:border-white/[0.14] hover:border-slate-300'
           : ''
       } ${className}`}
       {...props}
@@ -28,18 +23,18 @@ export function Card({
 
 export function CardHeader({ title, description, badge, action, className = '' }) {
   return (
-    <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/[0.06] dark:border-white/[0.06] border-slate-200/80 ${className}`}>
-      <div className="space-y-1 min-w-0">
-        <div className="flex items-center gap-2.5 flex-wrap">
+    <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-white/[0.08] dark:border-white/[0.08] border-slate-200 ${className}`}>
+      <div className="space-y-0.5 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
           {title && (
-            <h3 className="font-heading text-lg sm:text-xl font-bold tracking-tight dark:text-white text-slate-900 truncate">
+            <h3 className="text-[14px] font-semibold tracking-tight text-white dark:text-white text-slate-900 truncate">
               {title}
             </h3>
           )}
           {badge}
         </div>
         {description && (
-          <p className="text-xs sm:text-sm dark:text-slate-400 text-slate-600 line-clamp-2">
+          <p className="text-[12px] text-slate-400 dark:text-slate-400 text-slate-600 line-clamp-1">
             {description}
           </p>
         )}
@@ -48,3 +43,4 @@ export function CardHeader({ title, description, badge, action, className = '' }
     </div>
   )
 }
+

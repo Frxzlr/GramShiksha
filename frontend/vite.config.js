@@ -14,7 +14,8 @@ export default defineConfig({
       manifest: {
         name: 'GramShiksha',
         short_name: 'GramShiksha',
-        theme_color: '#16a34a',
+        theme_color: '#0a0a0b',
+        background_color: '#0a0a0b',
         display: 'standalone',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },

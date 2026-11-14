@@ -9,20 +9,23 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import {
-  School,
-  Users,
-  CheckCircle2,
-  TrendingUp,
   AlertTriangle,
-  Radio,
-  Flame,
+  RotateCcw,
 } from 'lucide-react'
-import { Card } from '../components/Card'
+import { Card, CardHeader } from '../components/Card'
 import { StatCard } from '../components/StatCard'
 import { Badge } from '../components/Badge'
 import { Button } from '../components/Button'
 import { Skeleton } from '../components/Skeleton'
 import { EmptyState } from '../components/EmptyState'
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableHeaderCell,
+  TableCell,
+} from '../components/Table'
 
 const fetchApi = async (url, options) => {
   try {
@@ -88,17 +91,19 @@ export default function Planner({ theme = 'dark' }) {
 
   if (loading) {
     return (
-      <div className="w-full space-y-6 text-left">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Skeleton className="h-28 w-full rounded-2xl" />
-          <Skeleton className="h-28 w-full rounded-2xl" />
-          <Skeleton className="h-28 w-full rounded-2xl" />
-          <Skeleton className="h-28 w-full rounded-2xl" />
+      <div className="w-full space-y-5 text-left">
+        <Skeleton className="h-10 w-64 rounded-[6px]" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <Skeleton className="h-24 w-full rounded-[8px]" />
+          <Skeleton className="h-24 w-full rounded-[8px]" />
+          <Skeleton className="h-24 w-full rounded-[8px]" />
+          <Skeleton className="h-24 w-full rounded-[8px]" />
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Skeleton className="h-80 w-full rounded-2xl" />
-          <Skeleton className="h-80 w-full rounded-2xl" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <Skeleton className="h-72 w-full rounded-[8px]" />
+          <Skeleton className="h-72 w-full rounded-[8px]" />
         </div>
+        <Skeleton className="h-64 w-full rounded-[8px]" />
       </div>
     )
   }
@@ -110,7 +115,7 @@ export default function Planner({ theme = 'dark' }) {
         title="Failed to Load Dashboard"
         description={error}
         action={
-          <Button variant="primary" onClick={fetchAnalytics}>
+          <Button variant="secondary" onClick={fetchAnalytics}>
             Retry Analytics
           </Button>
         }
@@ -145,105 +150,84 @@ export default function Planner({ theme = 'dark' }) {
     : []
 
   const isDark = theme === 'dark'
-  const tickColor = isDark ? '#94a3b8' : '#475569'
-  const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(15, 23, 42, 0.06)'
-  const tooltipBg = isDark ? '#111a2e' : '#ffffff'
-  const tooltipBorder = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(15, 23, 42, 0.12)'
-  const tooltipText = isDark ? '#f8fafc' : '#0f172a'
+  const tickColor = isDark ? '#a1a1aa' : '#71717a'
+  const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : '#f4f4f5'
+  const tooltipBg = isDark ? '#111214' : '#ffffff'
+  const tooltipBorder = isDark ? 'rgba(255, 255, 255, 0.08)' : '#e4e4e7'
+  const tooltipText = isDark ? '#f4f4f5' : '#09090b'
 
   return (
-    <div className="w-full space-y-6 text-left">
-      {/* Dashboard Header Card */}
-      <div className="glass-card gradient-border rounded-2xl p-5 sm:p-6 relative overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <Badge variant="emerald" size="sm" dot>
-                Live Telemetry
-              </Badge>
-              <Badge variant="cyan" size="sm">
-                District Level
-              </Badge>
-            </div>
-            <h2 className="font-heading text-xl sm:text-2xl font-extrabold tracking-tight dark:text-white text-slate-900">
-              Planner & Infrastructure Intelligence
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-400">
-              Multi-factor deficit analytics, live network speeds, and academic priority scores.
-            </p>
-          </div>
+    <div className="w-full space-y-5 text-left">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/[0.08] dark:border-white/[0.08] border-zinc-200">
+        <div>
+          <h2 className="text-[20px] font-semibold tracking-tight text-white dark:text-white text-zinc-900">
+            Planner & Infrastructure
+          </h2>
+          <p className="text-[13px] text-zinc-400 dark:text-zinc-400 text-zinc-600 mt-0.5">
+            Deficit analytics, bandwidth telemetry, and academic intervention scoring across rural clusters
+          </p>
+        </div>
 
+        <div className="flex items-center gap-2">
+          <Badge variant="emerald" size="sm" dot>
+            Live Telemetry
+          </Badge>
           <Button
             variant="secondary"
             size="sm"
-            icon={TrendingUp}
+            icon={RotateCcw}
             onClick={fetchAnalytics}
           >
-            Refresh Data
+            Refresh
           </Button>
         </div>
       </div>
 
       {/* 4 Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard
           label="Village Schools"
           value={totals.schools ?? 0}
-          sublabel="Tracked across districts"
-          icon={School}
-          variant="emerald"
+          sublabel="Tracked across district"
         />
         <StatCard
           label="Total Learners"
           value={(totals.students ?? 0).toLocaleString()}
           sublabel="Enrolled grades 6–8"
-          icon={Users}
-          variant="cyan"
         />
         <StatCard
           label="Quiz Submissions"
           value={(totals.quizAttempts ?? 0).toLocaleString()}
           sublabel="Total recorded tests"
-          icon={CheckCircle2}
-          variant="purple"
         />
         <StatCard
           label="Average Mastery"
           value={`${totals.avgScorePct ?? 0}%`}
           sublabel="District comprehension"
-          icon={TrendingUp}
-          variant="amber"
         />
       </div>
 
-      {/* Recharts Analytics Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Analytics Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Chart 1: Average Quiz Score by Village */}
-        <Card className="min-w-0 space-y-4">
-          <div className="flex items-center justify-between gap-2 border-b border-white/[0.06] dark:border-white/[0.06] border-slate-200/80 pb-3">
-            <div>
-              <h3 className="font-heading text-base font-bold dark:text-white text-slate-900">
-                Average Quiz Score by Village
-              </h3>
-              <p className="text-xs text-slate-400">Comprehension index per settlement</p>
-            </div>
-            <Badge variant="emerald" size="sm">
-              Academic
-            </Badge>
-          </div>
+        <Card className="min-w-0 space-y-3">
+          <CardHeader
+            title="Average Quiz Score by Village"
+            description="Comprehension index per settlement"
+            badge={
+              <Badge variant="neutral" size="sm">
+                Academic
+              </Badge>
+            }
+          />
 
-          <div className="w-full h-[280px]">
-            <ResponsiveContainer width="100%" height={280}>
+          <div className="w-full h-[260px] pt-2">
+            <ResponsiveContainer width="100%" height={260}>
               <BarChart
                 data={scoreByVillage}
-                margin={{ top: 15, right: 10, left: -20, bottom: 35 }}
+                margin={{ top: 10, right: 10, left: -20, bottom: 35 }}
               >
-                <defs>
-                  <linearGradient id="quizBarGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.9} />
-                    <stop offset="100%" stopColor="#059669" stopOpacity={0.3} />
-                  </linearGradient>
-                </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
                 <XAxis
                   dataKey="village"
@@ -257,28 +241,28 @@ export default function Planner({ theme = 'dark' }) {
                 />
                 <YAxis
                   domain={[0, 100]}
-                  tick={{ fill: tickColor, fontSize: 11 }}
+                  tick={{ fill: tickColor, fontSize: 11, fontFamily: 'monospace' }}
                   unit="%"
                   axisLine={{ stroke: gridColor }}
                   tickLine={false}
                 />
                 <Tooltip
                   formatter={(val) => [`${val}%`, 'Avg Score']}
-                  cursor={{ fill: 'rgba(255, 255, 255, 0.03)' }}
+                  cursor={{ fill: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)' }}
                   contentStyle={{
                     backgroundColor: tooltipBg,
-                    borderRadius: '14px',
+                    borderRadius: '6px',
                     border: `1px solid ${tooltipBorder}`,
-                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)',
                     color: tooltipText,
-                    fontSize: '13px',
-                    fontWeight: 600,
+                    fontSize: '12px',
+                    padding: '6px 10px',
+                    boxShadow: 'none',
                   }}
                 />
                 <Bar
                   dataKey="avgPct"
-                  fill="url(#quizBarGradient)"
-                  radius={[8, 8, 0, 0]}
+                  fill="#22c55e"
+                  radius={[3, 3, 0, 0]}
                 />
               </BarChart>
             </ResponsiveContainer>
@@ -286,31 +270,23 @@ export default function Planner({ theme = 'dark' }) {
         </Card>
 
         {/* Chart 2: Internet Connectivity by School */}
-        <Card className="min-w-0 space-y-4">
-          <div className="flex items-center justify-between gap-2 border-b border-white/[0.06] dark:border-white/[0.06] border-slate-200/80 pb-3">
-            <div>
-              <h3 className="font-heading text-base font-bold dark:text-white text-slate-900">
-                School Bandwidth (Mbps)
-              </h3>
-              <p className="text-xs text-slate-400">Peak cellular throughput</p>
-            </div>
-            <Badge variant="cyan" size="sm">
-              Network
-            </Badge>
-          </div>
+        <Card className="min-w-0 space-y-3">
+          <CardHeader
+            title="School Bandwidth (Mbps)"
+            description="Cellular and backhaul throughput"
+            badge={
+              <Badge variant="neutral" size="sm">
+                Network
+              </Badge>
+            }
+          />
 
-          <div className="w-full h-[280px]">
-            <ResponsiveContainer width="100%" height={280}>
+          <div className="w-full h-[260px] pt-2">
+            <ResponsiveContainer width="100%" height={260}>
               <BarChart
                 data={connectivity}
-                margin={{ top: 15, right: 10, left: -20, bottom: 45 }}
+                margin={{ top: 10, right: 10, left: -20, bottom: 45 }}
               >
-                <defs>
-                  <linearGradient id="connBarGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.9} />
-                    <stop offset="100%" stopColor="#0284c7" stopOpacity={0.3} />
-                  </linearGradient>
-                </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
                 <XAxis
                   dataKey="school"
@@ -323,28 +299,28 @@ export default function Planner({ theme = 'dark' }) {
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fill: tickColor, fontSize: 11 }}
+                  tick={{ fill: tickColor, fontSize: 11, fontFamily: 'monospace' }}
                   unit="M"
                   axisLine={{ stroke: gridColor }}
                   tickLine={false}
                 />
                 <Tooltip
                   formatter={(val) => [`${val} Mbps`, 'Throughput']}
-                  cursor={{ fill: 'rgba(255, 255, 255, 0.03)' }}
+                  cursor={{ fill: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)' }}
                   contentStyle={{
                     backgroundColor: tooltipBg,
-                    borderRadius: '14px',
+                    borderRadius: '6px',
                     border: `1px solid ${tooltipBorder}`,
-                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)',
                     color: tooltipText,
-                    fontSize: '13px',
-                    fontWeight: 600,
+                    fontSize: '12px',
+                    padding: '6px 10px',
+                    boxShadow: 'none',
                   }}
                 />
                 <Bar
                   dataKey="mbps"
-                  fill="url(#connBarGradient)"
-                  radius={[8, 8, 0, 0]}
+                  fill="#22c55e"
+                  radius={[3, 3, 0, 0]}
                 />
               </BarChart>
             </ResponsiveContainer>
@@ -354,72 +330,60 @@ export default function Planner({ theme = 'dark' }) {
 
       {/* Schools Needing Attention */}
       <Card className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.06] dark:border-white/[0.06] border-slate-200/80 pb-3">
-          <div>
-            <h3 className="font-heading text-lg font-bold dark:text-white text-slate-900 flex items-center gap-2">
-              <Flame className="w-5 h-5 text-rose-400" />
-              Schools Needing Attention
-            </h3>
-            <p className="text-xs text-slate-400">
-              Composite priority ranking (0–100) weighing connectivity downtime, hardware shortages, and quiz deficits.
-            </p>
-          </div>
-          <Badge variant="amber" size="sm">
-            Action Priority
-          </Badge>
-        </div>
+        <CardHeader
+          title="Schools Needing Attention"
+          description="Composite ranking weighing connectivity downtime, hardware shortages, and quiz deficits"
+          badge={
+            <Badge variant="amber" size="sm" dot>
+              Deficit Matrix
+            </Badge>
+          }
+        />
 
         {priorityScore.length === 0 ? (
-          <p className="text-sm text-slate-400 py-6 text-center">
+          <p className="text-sm text-zinc-400 py-6 text-center">
             No schools currently flagged for attention.
           </p>
         ) : (
-          <div className="divide-y divide-white/[0.06] dark:divide-white/[0.06] divide-slate-200/80">
-            {priorityScore.map((item, idx) => {
-              const rank = item.rank ?? idx + 1
-              const schoolName = item.school || item.schoolName || item.name || 'Unknown School'
-              const village = item.village || 'Unknown Village'
-              const score = typeof item.score === 'number' ? item.score : item.priorityScore ?? 0
-              const reasons = Array.isArray(item.reasons)
-                ? item.reasons
-                : item.reason
-                ? [item.reason]
-                : []
+          <Table>
+            <TableHead>
+              <tr>
+                <TableHeaderCell className="w-16">Rank</TableHeaderCell>
+                <TableHeaderCell>School</TableHeaderCell>
+                <TableHeaderCell>Settlement</TableHeaderCell>
+                <TableHeaderCell>Deficit Indicators</TableHeaderCell>
+                <TableHeaderCell className="text-right">Priority Score</TableHeaderCell>
+              </tr>
+            </TableHead>
+            <TableBody>
+              {priorityScore.map((item, idx) => {
+                const rank = item.rank ?? idx + 1
+                const schoolName = item.school || item.schoolName || item.name || 'Unknown School'
+                const village = item.village || 'Unknown Village'
+                const score = typeof item.score === 'number' ? item.score : item.priorityScore ?? 0
+                const reasons = Array.isArray(item.reasons)
+                  ? item.reasons
+                  : item.reason
+                  ? [item.reason]
+                  : []
 
-              const isCritical = score >= 70
-              const isModerate = score >= 40
+                const isCritical = score >= 70
+                const isModerate = score >= 40
 
-              return (
-                <div
-                  key={item.id || idx}
-                  className="py-4 first:pt-2 last:pb-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
-                >
-                  <div className="flex items-start gap-3.5 min-w-0">
-                    <span
-                      className={`flex-shrink-0 w-8 h-8 rounded-xl font-heading font-bold text-xs flex items-center justify-center border ${
-                        isCritical
-                          ? 'bg-rose-500/15 border-rose-500/30 text-rose-400'
-                          : isModerate
-                          ? 'bg-amber-500/15 border-amber-500/30 text-amber-400'
-                          : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
-                      }`}
-                    >
+                return (
+                  <TableRow key={item.id || idx} isShortage={isCritical}>
+                    <TableCell mono className="font-semibold text-zinc-400">
                       #{rank}
-                    </span>
-
-                    <div className="space-y-1.5 min-w-0">
-                      <div className="flex items-baseline gap-2 flex-wrap">
-                        <h4 className="font-heading font-bold dark:text-white text-slate-900 text-sm sm:text-base group-hover:text-emerald-400 transition-colors">
-                          {schoolName}
-                        </h4>
-                        <span className="text-xs text-slate-400 font-medium">
-                          ({village})
-                        </span>
-                      </div>
-
-                      {/* Reasons as small badges */}
-                      {reasons.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 pt-0.5">
+                    </TableCell>
+                    <TableCell className="font-medium text-white dark:text-white text-zinc-900">
+                      {schoolName}
+                    </TableCell>
+                    <TableCell className="text-zinc-400 dark:text-zinc-400 text-zinc-600">
+                      {village}
+                    </TableCell>
+                    <TableCell>
+                      {reasons.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5">
                           {reasons.map((reason, rIdx) => (
                             <Badge
                               key={rIdx}
@@ -430,81 +394,52 @@ export default function Planner({ theme = 'dark' }) {
                             </Badge>
                           ))}
                         </div>
+                      ) : (
+                        <span className="text-xs text-zinc-500">—</span>
                       )}
-                    </div>
-                  </div>
-
-                  {/* Priority score with mini progress bar */}
-                  <div className="flex items-center gap-3 self-end sm:self-center pl-11 sm:pl-0 shrink-0">
-                    <div className="hidden sm:flex flex-col items-end gap-1">
-                      <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">
-                        Priority
-                      </span>
-                      <div className="w-20 h-1.5 bg-white/[0.08] dark:bg-white/[0.08] bg-slate-200 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full ${
-                            isCritical
-                              ? 'bg-rose-500'
-                              : isModerate
-                              ? 'bg-amber-500'
-                              : 'bg-emerald-500'
-                          }`}
-                          style={{ width: `${Math.min(100, score)}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    <Badge
-                      variant={isCritical ? 'red' : isModerate ? 'amber' : 'emerald'}
-                      size="md"
-                      className="font-bold tabular-nums"
-                    >
-                      Score: {score}
-                    </Badge>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Badge
+                        variant={isCritical ? 'red' : isModerate ? 'amber' : 'emerald'}
+                        size="sm"
+                        className="font-mono tabular-nums font-semibold"
+                      >
+                        {score} / 100
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
         )}
       </Card>
 
       {/* Live connectivity from devices */}
       <Card className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.06] dark:border-white/[0.06] border-slate-200/80 pb-3">
-          <div>
-            <h3 className="font-heading text-lg font-bold dark:text-white text-slate-900 flex items-center gap-2">
-              <Radio className="w-5 h-5 text-cyan-400 animate-pulse" />
-              Live Connectivity from Field Tablets
-            </h3>
-            <p className="text-xs text-slate-400">
-              Decentralized ping measurements captured directly by client tablets during student sessions.
-            </p>
-          </div>
-          <Badge variant="cyan" size="sm">
-            Active Telemetry
-          </Badge>
-        </div>
+        <CardHeader
+          title="Field Tablet Telemetry"
+          description="Decentralized latency and throughput pings captured during active student sessions"
+          badge={
+            <Badge variant="emerald" size="sm" dot>
+              Active Edge Nodes
+            </Badge>
+          }
+        />
 
         {liveConnectivity.length === 0 ? (
-          <p className="text-sm text-slate-400 py-6 text-center">
+          <p className="text-sm text-zinc-400 py-6 text-center">
             No device readings yet. Connect edge devices to transmit metrics.
           </p>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-5">
             {/* Live Throughput Bar Chart */}
-            <div className="w-full h-[240px]">
-              <ResponsiveContainer width="100%" height={240}>
+            <div className="w-full h-[220px]">
+              <ResponsiveContainer width="100%" height={220}>
                 <BarChart
                   data={liveConnectivity}
                   margin={{ top: 10, right: 10, left: -20, bottom: 35 }}
                 >
-                  <defs>
-                    <linearGradient id="liveBarGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10b981" stopOpacity={0.9} />
-                      <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.2} />
-                    </linearGradient>
-                  </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={gridColor} />
                   <XAxis
                     dataKey="village"
@@ -517,77 +452,74 @@ export default function Planner({ theme = 'dark' }) {
                     tickLine={false}
                   />
                   <YAxis
-                    tick={{ fill: tickColor, fontSize: 11 }}
+                    tick={{ fill: tickColor, fontSize: 11, fontFamily: 'monospace' }}
                     unit="M"
                     axisLine={{ stroke: gridColor }}
                     tickLine={false}
                   />
                   <Tooltip
                     formatter={(val) => [`${val} Mbps`, 'Live Speed']}
-                    cursor={{ fill: 'rgba(255, 255, 255, 0.03)' }}
+                    cursor={{ fill: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)' }}
                     contentStyle={{
                       backgroundColor: tooltipBg,
-                      borderRadius: '14px',
+                      borderRadius: '6px',
                       border: `1px solid ${tooltipBorder}`,
                       color: tooltipText,
-                      fontSize: '13px',
-                      fontWeight: 600,
+                      fontSize: '12px',
+                      padding: '6px 10px',
+                      boxShadow: 'none',
                     }}
                   />
                   <Bar
                     dataKey="avgMbps"
-                    fill="url(#liveBarGrad)"
-                    radius={[8, 8, 0, 0]}
+                    fill="#22c55e"
+                    radius={[3, 3, 0, 0]}
                   />
                 </BarChart>
               </ResponsiveContainer>
             </div>
 
-            {/* Live telemetry table with sticky header */}
-            <div className="overflow-x-auto rounded-xl border border-white/[0.08] dark:border-white/[0.08] border-slate-200">
-              <table className="w-full text-left border-collapse text-xs sm:text-sm min-w-[500px]">
-                <thead>
-                  <tr className="bg-white/[0.03] dark:bg-white/[0.03] bg-slate-100/70 border-b border-white/[0.08] dark:border-white/[0.08] border-slate-200 text-slate-400 uppercase tracking-wider font-semibold text-[11px]">
-                    <th scope="col" className="px-4 py-3">Settlement</th>
-                    <th scope="col" className="px-4 py-3 text-center">Avg Throughput</th>
-                    <th scope="col" className="px-4 py-3 text-center">Uptime Metric</th>
-                    <th scope="col" className="px-4 py-3 text-center">Last Ping</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/[0.04] dark:divide-white/[0.04] divide-slate-100">
-                  {liveConnectivity.map((item, idx) => (
-                    <tr
-                      key={idx}
-                      className="hover:bg-white/[0.02] dark:hover:bg-white/[0.02] hover:bg-slate-50/50 transition-colors"
-                    >
-                      <td className="px-4 py-3 font-medium dark:text-white text-slate-900">
-                        {item.village}
-                      </td>
-                      <td className="px-4 py-3 text-center font-bold text-emerald-400 tabular-nums">
-                        {item.avgMbps} Mbps
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        <Badge
-                          variant={
-                            item.uptimePct >= 80
-                              ? 'emerald'
-                              : item.uptimePct >= 50
-                              ? 'amber'
-                              : 'red'
-                          }
-                          size="sm"
-                        >
-                          {item.uptimePct}%
-                        </Badge>
-                      </td>
-                      <td className="px-4 py-3 text-center text-xs text-slate-400 font-mono">
-                        {item.lastSeen ? new Date(item.lastSeen).toLocaleTimeString() : 'Just now'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            {/* Live telemetry table */}
+            <Table>
+              <TableHead>
+                <tr>
+                  <TableHeaderCell>Settlement</TableHeaderCell>
+                  <TableHeaderCell className="text-center">Avg Throughput</TableHeaderCell>
+                  <TableHeaderCell className="text-center">Uptime Metric</TableHeaderCell>
+                  <TableHeaderCell className="text-right">Last Ping</TableHeaderCell>
+                </tr>
+              </TableHead>
+              <TableBody>
+                {liveConnectivity.map((item, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell className="font-medium text-white dark:text-white text-zinc-900">
+                      {item.village}
+                    </TableCell>
+                    <TableCell mono className="text-center font-semibold text-[#22c55e]">
+                      {item.avgMbps} Mbps
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge
+                        variant={
+                          item.uptimePct >= 80
+                            ? 'emerald'
+                            : item.uptimePct >= 50
+                            ? 'amber'
+                            : 'red'
+                        }
+                        size="sm"
+                        dot
+                      >
+                        {item.uptimePct}%
+                      </Badge>
+                    </TableCell>
+                    <TableCell mono className="text-right text-xs text-zinc-400">
+                      {item.lastSeen ? new Date(item.lastSeen).toLocaleTimeString() : 'Just now'}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )}
       </Card>
