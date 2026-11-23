@@ -37,9 +37,9 @@ export function createRampStation({ scene, materials, interaction, stateManager,
   let rotTargetAngle = currentAngle
 
   // 1. Station Base
-  const baseGeo = new THREE.BoxGeometry(0.8, 0.02, 0.48)
+  const baseGeo = new THREE.BoxGeometry(0.92, 0.02, 0.54)
   const baseMesh = new THREE.Mesh(baseGeo, materials.standBase)
-  baseMesh.position.set(0, 0.01, 0.04)
+  baseMesh.position.set(0, 0.01, 0.08)
   baseMesh.receiveShadow = true
   group.add(baseMesh)
 
@@ -77,23 +77,25 @@ export function createRampStation({ scene, materials, interaction, stateManager,
     pivotGroup.rotation.x = -(angleDeg * Math.PI) / 180
   }
 
-  // 4. Information Labels - Enlarged for clear viewing from default camera
+  // 4. Station Title Card - Lowered and placed close to the station base so it never overlaps the quiz board
   const titleLabel = makeLabel('INCLINED PLANE & FRICTION\nCoefficient μ = 0.40', {
-    width: 0.85,
-    height: 0.22,
+    width: 0.72,
+    height: 0.18,
     fontSize: 34,
     bgColor: 'rgba(15, 18, 24, 0.94)',
   })
-  titleLabel.position.set(0, 0.94, 0)
+  titleLabel.position.set(0, 0.08, 0.22)
+  titleLabel.rotation.x = -Math.PI / 6 // Tilted upward toward camera
   group.add(titleLabel)
 
+  // 5. Ramp Status Telemetry Label - Doubled in text & plane size for effortless reading
   const infoLabel = makeLabel('', {
-    width: 0.72,
-    height: 0.24,
-    fontSize: 28,
+    width: 0.95,
+    height: 0.32,
+    fontSize: 48,
     lineHeight: 1.35,
   })
-  infoLabel.position.set(0, 0.60, 0.08)
+  infoLabel.position.set(0, 0.42, 0.08)
   group.add(infoLabel)
 
   function refreshInfoLabel() {
@@ -114,43 +116,43 @@ export function createRampStation({ scene, materials, interaction, stateManager,
   updateBlockPosition()
   refreshInfoLabel()
 
-  // 5. Interactive Control Buttons - Angled toward camera
-  const btnGeo = new THREE.BoxGeometry(0.26, 0.04, 0.09)
+  // 6. Interactive Control Buttons - Doubled in size and angled toward camera
+  const btnGeo = new THREE.BoxGeometry(0.32, 0.045, 0.10)
 
   // CHANGE ANGLE Button
   const angleBtnMesh = new THREE.Mesh(btnGeo, materials.buttonSecondary.clone())
-  angleBtnMesh.position.set(-0.18, 0.035, 0.27)
+  angleBtnMesh.position.set(-0.20, 0.04, 0.38)
   angleBtnMesh.castShadow = true
   group.add(angleBtnMesh)
 
   const angleBtnLabel = makeLabel('ANGLE: 15°', {
-    width: 0.26,
-    height: 0.08,
-    fontSize: 28,
+    width: 0.32,
+    height: 0.09,
+    fontSize: 38,
     bgColor: 'transparent',
     borderColor: 'transparent',
     color: '#ffffff',
   })
-  angleBtnLabel.position.set(-0.18, 0.065, 0.27)
-  angleBtnLabel.rotation.x = -Math.PI / 4 // 45 degree tilt toward camera
+  angleBtnLabel.position.set(-0.20, 0.075, 0.38)
+  angleBtnLabel.rotation.x = -Math.PI / 4
   group.add(angleBtnLabel)
 
   // RELEASE Button
   const releaseBtnMesh = new THREE.Mesh(btnGeo, materials.buttonPrimary.clone())
-  releaseBtnMesh.position.set(0.18, 0.035, 0.27)
+  releaseBtnMesh.position.set(0.20, 0.04, 0.38)
   releaseBtnMesh.castShadow = true
   group.add(releaseBtnMesh)
 
   const releaseBtnLabel = makeLabel('RELEASE', {
-    width: 0.26,
-    height: 0.08,
-    fontSize: 28,
+    width: 0.30,
+    height: 0.09,
+    fontSize: 38,
     bgColor: 'transparent',
     borderColor: 'transparent',
     color: '#ffffff',
   })
-  releaseBtnLabel.position.set(0.18, 0.065, 0.27)
-  releaseBtnLabel.rotation.x = -Math.PI / 4 // 45 degree tilt toward camera
+  releaseBtnLabel.position.set(0.20, 0.075, 0.38)
+  releaseBtnLabel.rotation.x = -Math.PI / 4
   group.add(releaseBtnLabel)
 
   // Action Functions
