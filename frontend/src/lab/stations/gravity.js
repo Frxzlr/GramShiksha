@@ -26,40 +26,40 @@ export function createGravityStation({ scene, materials, interaction, stateManag
 
   // 1. Structure / Frame
   // Base plate
-  const baseGeo = new THREE.BoxGeometry(0.7, 0.02, 0.45)
+  const baseGeo = new THREE.BoxGeometry(0.8, 0.02, 0.48)
   const baseMesh = new THREE.Mesh(baseGeo, materials.standBase)
-  baseMesh.position.set(0, 0.01, 0)
+  baseMesh.position.set(0, 0.01, 0.04)
   baseMesh.receiveShadow = true
   group.add(baseMesh)
 
   // Vertical support posts
-  const postGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.75, 16)
+  const postGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.78, 16)
   const postLeft = new THREE.Mesh(postGeo, materials.metalFrame)
-  postLeft.position.set(-0.25, 0.38, 0)
+  postLeft.position.set(-0.32, 0.40, 0)
   postLeft.castShadow = true
   group.add(postLeft)
 
   const postRight = new THREE.Mesh(postGeo, materials.metalFrame)
-  postRight.position.set(0.25, 0.38, 0)
+  postRight.position.set(0.32, 0.40, 0)
   postRight.castShadow = true
   group.add(postRight)
 
   // Top crossbar
-  const barGeo = new THREE.BoxGeometry(0.56, 0.02, 0.04)
+  const barGeo = new THREE.BoxGeometry(0.72, 0.02, 0.04)
   const topBar = new THREE.Mesh(barGeo, materials.metalFrame)
-  topBar.position.set(0, 0.74, 0)
+  topBar.position.set(0, 0.78, 0)
   topBar.castShadow = true
   group.add(topBar)
 
   // Landing catch pads
-  const padGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.01, 24)
+  const padGeo = new THREE.CylinderGeometry(0.09, 0.09, 0.01, 24)
   const padHeavy = new THREE.Mesh(padGeo, materials.cushionPad)
-  padHeavy.position.set(-0.16, 0.025, 0)
+  padHeavy.position.set(-0.22, 0.025, 0)
   padHeavy.receiveShadow = true
   group.add(padHeavy)
 
   const padLight = new THREE.Mesh(padGeo, materials.cushionPad)
-  padLight.position.set(0.16, 0.025, 0)
+  padLight.position.set(0.22, 0.025, 0)
   padLight.receiveShadow = true
   group.add(padLight)
 
@@ -68,109 +68,109 @@ export function createGravityStation({ scene, materials, interaction, stateManag
 
   // Heavy Ball (Metal, 5kg)
   const heavyMesh = new THREE.Mesh(sphereGeo, materials.heavyBall)
-  heavyMesh.position.set(-0.16, START_Y, 0)
+  heavyMesh.position.set(-0.22, START_Y, 0)
   heavyMesh.castShadow = true
   group.add(heavyMesh)
 
   // Light Ball (Rubber, 0.5kg)
   const lightMesh = new THREE.Mesh(sphereGeo, materials.lightBall)
-  lightMesh.position.set(0.16, START_Y, 0)
+  lightMesh.position.set(0.22, START_Y, 0)
   lightMesh.castShadow = true
   group.add(lightMesh)
 
-  // 3. Informational Labels
+  // 3. Informational Labels - Enlarged and repositioned to avoid overlapping
   const titleLabel = makeLabel('FREE FALL EXPERIMENT\nGalileo Drop Tower', {
-    width: 0.65,
-    height: 0.18,
-    fontSize: 26,
-    bgColor: 'rgba(15, 17, 21, 0.92)',
+    width: 0.85,
+    height: 0.22,
+    fontSize: 34,
+    bgColor: 'rgba(15, 18, 24, 0.94)',
   })
-  titleLabel.position.set(0, 0.88, 0)
+  titleLabel.position.set(0, 0.94, 0)
   group.add(titleLabel)
 
   const heavyLabel = makeLabel('Heavy (5 kg)\n0.000 s', {
-    width: 0.3,
-    height: 0.14,
-    fontSize: 22,
+    width: 0.36,
+    height: 0.16,
+    fontSize: 30,
     color: '#cbd5e1',
   })
-  heavyLabel.position.set(-0.16, 0.45, 0.12)
+  heavyLabel.position.set(-0.22, 0.48, 0.12)
   group.add(heavyLabel)
 
   const lightLabel = makeLabel('Light (0.5 kg)\n0.000 s', {
-    width: 0.3,
-    height: 0.14,
-    fontSize: 22,
+    width: 0.36,
+    height: 0.16,
+    fontSize: 30,
     color: '#f87171',
   })
-  lightLabel.position.set(0.16, 0.45, 0.12)
+  lightLabel.position.set(0.22, 0.48, 0.12)
   group.add(lightLabel)
 
   const statusLabel = makeLabel('Air Resistance: OFF\n(Vacuum Mode)', {
-    width: 0.45,
-    height: 0.14,
-    fontSize: 22,
-    color: '#a1a1aa',
+    width: 0.58,
+    height: 0.16,
+    fontSize: 26,
+    color: '#cbd5e1',
   })
-  statusLabel.position.set(0, 0.22, 0.15)
+  statusLabel.position.set(0, 0.20, 0.16)
   group.add(statusLabel)
 
-  // 4. Interactive 3D Control Buttons
-  const buttonGeo = new THREE.BoxGeometry(0.14, 0.035, 0.08)
+  // 4. Interactive 3D Control Buttons (Enlarged and angled toward camera for easy reading)
+  const buttonGeo = new THREE.BoxGeometry(0.18, 0.04, 0.09)
 
   // DROP Button
   const dropMesh = new THREE.Mesh(buttonGeo, materials.buttonPrimary.clone())
-  dropMesh.position.set(-0.16, 0.03, 0.22)
+  dropMesh.position.set(-0.20, 0.035, 0.25)
   dropMesh.castShadow = true
   group.add(dropMesh)
 
   const dropLabel = makeLabel('DROP', {
-    width: 0.14,
-    height: 0.07,
-    fontSize: 24,
+    width: 0.18,
+    height: 0.08,
+    fontSize: 32,
     bgColor: 'transparent',
     borderColor: 'transparent',
     color: '#ffffff',
   })
-  dropLabel.position.set(-0.16, 0.05, 0.22)
-  dropLabel.rotation.x = -Math.PI / 2
+  dropLabel.position.set(-0.20, 0.065, 0.25)
+  dropLabel.rotation.x = -Math.PI / 4 // 45 degree tilt toward camera
   group.add(dropLabel)
 
   // RESET Button
   const resetMesh = new THREE.Mesh(buttonGeo, materials.buttonSecondary.clone())
-  resetMesh.position.set(0.16, 0.03, 0.22)
+  resetMesh.position.set(0.20, 0.035, 0.25)
   resetMesh.castShadow = true
   group.add(resetMesh)
 
   const resetLabel = makeLabel('RESET', {
-    width: 0.14,
-    height: 0.07,
-    fontSize: 24,
+    width: 0.18,
+    height: 0.08,
+    fontSize: 32,
     bgColor: 'transparent',
     borderColor: 'transparent',
     color: '#ffffff',
   })
-  resetLabel.position.set(0.16, 0.05, 0.22)
-  resetLabel.rotation.x = -Math.PI / 2
+  resetLabel.position.set(0.20, 0.065, 0.25)
+  resetLabel.rotation.x = -Math.PI / 4
   group.add(resetLabel)
 
   // AIR RESISTANCE Toggle Button
-  const toggleGeo = new THREE.BoxGeometry(0.36, 0.035, 0.07)
+  const toggleGeo = new THREE.BoxGeometry(0.44, 0.04, 0.08)
   const toggleMesh = new THREE.Mesh(toggleGeo, materials.buttonSecondary.clone())
-  toggleMesh.position.set(0, 0.03, 0.31)
+  toggleMesh.position.set(0, 0.035, 0.36)
   toggleMesh.castShadow = true
   group.add(toggleMesh)
 
   const toggleLabel = makeLabel('AIR RESISTANCE: OFF', {
-    width: 0.36,
-    height: 0.07,
-    fontSize: 20,
+    width: 0.44,
+    height: 0.08,
+    fontSize: 26,
     bgColor: 'transparent',
     borderColor: 'transparent',
     color: '#e4e4e7',
   })
-  toggleLabel.position.set(0, 0.05, 0.31)
-  toggleLabel.rotation.x = -Math.PI / 2
+  toggleLabel.position.set(0, 0.065, 0.36)
+  toggleLabel.rotation.x = -Math.PI / 4
   group.add(toggleLabel)
 
   // Actions
@@ -203,7 +203,7 @@ export function createGravityStation({ scene, materials, interaction, stateManag
       airResistance
         ? 'Air Resistance: ON\n(Drag Active)'
         : 'Air Resistance: OFF\n(Vacuum Mode)',
-      { color: airResistance ? '#38bdf8' : '#a1a1aa' }
+      { color: airResistance ? '#38bdf8' : '#cbd5e1' }
     )
     stateManager.setAirResistance(airResistance)
     if (stationState === 'landed') {

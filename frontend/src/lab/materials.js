@@ -5,54 +5,54 @@ import * as THREE from 'three'
  */
 export function createLabMaterials() {
   const materials = {
-    // Room surfaces (8 x 3 x 8 m)
+    // Room surfaces (8 x 3 x 8 m) - brightened for crisp visual clarity
     floor: new THREE.MeshStandardMaterial({
-      color: 0x18181b,
-      roughness: 0.65,
-      metalness: 0.1,
+      color: 0x8a99ad, // Polished, light architectural laboratory floor
+      roughness: 0.45,
+      metalness: 0.08,
       name: 'floorMaterial',
     }),
     wall: new THREE.MeshStandardMaterial({
-      color: 0x22242a,
-      roughness: 0.85,
-      metalness: 0.05,
+      color: 0xd8dde6, // Bright, clean off-white / light slate laboratory walls
+      roughness: 0.7,
+      metalness: 0.02,
       name: 'wallMaterial',
     }),
     ceiling: new THREE.MeshStandardMaterial({
-      color: 0x111215,
-      roughness: 0.9,
-      metalness: 0.05,
+      color: 0xedf2f8, // Bright white reflective ceiling
+      roughness: 0.8,
+      metalness: 0.02,
       name: 'ceilingMaterial',
     }),
 
     // Lab bench & structural framework
     tableTop: new THREE.MeshStandardMaterial({
-      color: 0x2e323b,
+      color: 0x384152, // Smooth, modern scientific lab benchtop
       roughness: 0.35,
-      metalness: 0.2,
+      metalness: 0.15,
       name: 'tableTopMaterial',
     }),
     tableLeg: new THREE.MeshStandardMaterial({
-      color: 0x16181d,
-      roughness: 0.5,
-      metalness: 0.7,
+      color: 0x1e2430,
+      roughness: 0.45,
+      metalness: 0.65,
       name: 'tableLegMaterial',
     }),
     metalFrame: new THREE.MeshStandardMaterial({
-      color: 0x94a3b8,
-      roughness: 0.25,
-      metalness: 0.8,
+      color: 0xb0bccb,
+      roughness: 0.2,
+      metalness: 0.85,
       name: 'metalFrameMaterial',
     }),
     standBase: new THREE.MeshStandardMaterial({
-      color: 0x1e2025,
-      roughness: 0.6,
-      metalness: 0.3,
+      color: 0x28303f,
+      roughness: 0.55,
+      metalness: 0.25,
       name: 'standBaseMaterial',
     }),
     cushionPad: new THREE.MeshStandardMaterial({
-      color: 0x33363f,
-      roughness: 0.8,
+      color: 0x475569,
+      roughness: 0.7,
       metalness: 0.1,
       name: 'cushionPadMaterial',
     }),
@@ -60,13 +60,13 @@ export function createLabMaterials() {
     // Gravity station spheres
     heavyBall: new THREE.MeshStandardMaterial({
       color: 0x9ca3af,
-      roughness: 0.2,
-      metalness: 0.85,
+      roughness: 0.18,
+      metalness: 0.9,
       name: 'heavyBallMaterial',
     }),
     lightBall: new THREE.MeshStandardMaterial({
       color: 0xef4444,
-      roughness: 0.65,
+      roughness: 0.6,
       metalness: 0.05,
       name: 'lightBallMaterial',
     }),
@@ -93,14 +93,14 @@ export function createLabMaterials() {
 
     // Wall Quiz Board
     quizBoard: new THREE.MeshStandardMaterial({
-      color: 0x0f1013,
-      roughness: 0.6,
+      color: 0x0f1117,
+      roughness: 0.55,
       metalness: 0.15,
       name: 'quizBoardMaterial',
     }),
     quizFrame: new THREE.MeshStandardMaterial({
-      color: 0x383b45,
-      roughness: 0.4,
+      color: 0x475569,
+      roughness: 0.35,
       metalness: 0.6,
       name: 'quizFrameMaterial',
     }),
@@ -111,11 +111,11 @@ export function createLabMaterials() {
       roughness: 0.35,
       metalness: 0.2,
       emissive: 0x052e16,
-      emissiveIntensity: 0.2,
+      emissiveIntensity: 0.25,
       name: 'buttonPrimaryMaterial',
     }),
     buttonSecondary: new THREE.MeshStandardMaterial({
-      color: 0x3f3f46,
+      color: 0x334155,
       roughness: 0.45,
       metalness: 0.15,
       name: 'buttonSecondaryMaterial',
@@ -131,7 +131,7 @@ export function createLabMaterials() {
       roughness: 0.3,
       metalness: 0.2,
       emissive: 0x16a34a,
-      emissiveIntensity: 0.3,
+      emissiveIntensity: 0.4,
       name: 'buttonCorrectMaterial',
     }),
     buttonWrong: new THREE.MeshStandardMaterial({
@@ -139,7 +139,7 @@ export function createLabMaterials() {
       roughness: 0.3,
       metalness: 0.2,
       emissive: 0xdc2626,
-      emissiveIntensity: 0.3,
+      emissiveIntensity: 0.4,
       name: 'buttonWrongMaterial',
     }),
   }

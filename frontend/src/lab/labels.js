@@ -1,44 +1,45 @@
 import * as THREE from 'three'
 
 /**
- * Creates an updatable 3D text label using a CanvasTexture mapped onto a PlaneGeometry.
+ * Creates an updatable 3D text label using a high-resolution CanvasTexture mapped onto a PlaneGeometry.
  *
  * @param {string} initialText - Initial label text (supports '\n' for multi-line)
  * @param {Object} [options]
  * @param {number} [options.width=1.0] - Physical width in 3D world units (meters)
  * @param {number} [options.height=0.4] - Physical height in 3D world units (meters)
- * @param {number} [options.fontSize=32] - Canvas font size in pixels
+ * @param {number} [options.fontSize=44] - Canvas font size in pixels
  * @param {string} [options.fontFamily='Inter, -apple-system, sans-serif'] - Font family
  * @param {string} [options.color='#f4f4f5'] - Text color
- * @param {string} [options.bgColor='rgba(17, 18, 20, 0.88)'] - Background color or 'transparent'
- * @param {string} [options.borderColor='rgba(255, 255, 255, 0.12)'] - Border color
- * @param {number} [options.borderWidth=2] - Border width in canvas pixels
- * @param {number} [options.borderRadius=12] - Border radius in canvas pixels
+ * @param {string} [options.bgColor='rgba(15, 18, 24, 0.94)'] - Background color or 'transparent'
+ * @param {string} [options.borderColor='rgba(255, 255, 255, 0.18)'] - Border color
+ * @param {number} [options.borderWidth=3] - Border width in canvas pixels
+ * @param {number} [options.borderRadius=16] - Border radius in canvas pixels
  * @param {string} [options.textAlign='center'] - 'center' | 'left' | 'right'
- * @param {number} [options.padding=16] - Padding in canvas pixels
+ * @param {number} [options.padding=24] - Padding in canvas pixels
+ * @param {number} [options.resolution=1024] - Base canvas resolution for high DPI crispness
  * @returns {THREE.Mesh} A Plane mesh with .update(text, opts) and .dispose() methods
  */
 export function makeLabel(initialText = '', options = {}) {
   let opts = {
     width: 1.0,
     height: 0.4,
-    fontSize: 32,
-    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-    color: '#f4f4f5',
-    bgColor: 'rgba(17, 18, 20, 0.92)',
-    borderColor: 'rgba(255, 255, 255, 0.14)',
-    borderWidth: 2,
-    borderRadius: 12,
+    fontSize: 48,
+    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    color: '#ffffff',
+    bgColor: 'rgba(15, 18, 24, 0.94)',
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth: 4,
+    borderRadius: 20,
     textAlign: 'center',
-    padding: 16,
-    resolution: 512,
+    padding: 28,
+    resolution: 1024,
     ...options,
   }
 
   // Determine canvas pixel dimensions based on aspect ratio
-  const aspect = opts.width / opts.height
+  const aspect = Math.max(0.1, opts.width / opts.height)
   const canvasWidth = opts.resolution
-  const canvasHeight = Math.max(64, Math.round(canvasWidth / aspect))
+  const canvasHeight = Math.max(96, Math.round(canvasWidth / aspect))
 
   const canvas = document.createElement('canvas')
   canvas.width = canvasWidth
@@ -78,10 +79,10 @@ export function makeLabel(initialText = '', options = {}) {
       }
     }
 
-    // Render multiline text
+    // Render multiline text with bold crisp weight
     const lines = String(text).split('\n')
     ctx.fillStyle = currentOpts.color
-    ctx.font = `600 ${currentOpts.fontSize}px ${currentOpts.fontFamily}`
+    ctx.font = `700 ${currentOpts.fontSize}px ${currentOpts.fontFamily}`
     ctx.textBaseline = 'middle'
 
     const lineHeight = currentOpts.fontSize * 1.35

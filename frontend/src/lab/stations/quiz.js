@@ -56,12 +56,14 @@ const QUESTIONS = [
 
 /**
  * Wall Assessment Station
- * Interactive 3D quiz board mounted on the front wall at eye height.
+ * Interactive 3D quiz board mounted high on the front wall above all table stations.
  */
 export function createQuizStation({ scene, materials, interaction, stateManager }) {
   const group = new THREE.Group()
   group.name = 'QuizStation'
-  group.position.set(0, 1.85, -3.92)
+  // Mounted high on the front wall (z = -3.97) well above table (y = 0.9) and station apparatus
+  group.position.set(0, 2.38, -3.97)
+  group.rotation.x = 0.06 // Slight downward tilt toward camera eye height (1.6m)
 
   let currentIndex = 0
   let score = 0
@@ -69,59 +71,59 @@ export function createQuizStation({ scene, materials, interaction, stateManager 
   let isFinished = false
 
   // 1. Board Backing & Frame
-  const boardGeo = new THREE.BoxGeometry(2.5, 1.45, 0.04)
+  const boardGeo = new THREE.BoxGeometry(3.2, 1.08, 0.04)
   const boardMesh = new THREE.Mesh(boardGeo, materials.quizBoard)
   boardMesh.castShadow = true
   boardMesh.receiveShadow = true
   group.add(boardMesh)
 
-  const frameGeo = new THREE.BoxGeometry(2.54, 1.49, 0.02)
+  const frameGeo = new THREE.BoxGeometry(3.24, 1.12, 0.02)
   const frameMesh = new THREE.Mesh(frameGeo, materials.quizFrame)
   frameMesh.position.set(0, 0, -0.015)
   group.add(frameMesh)
 
-  // 2. Header and Question Labels
-  const headerLabel = makeLabel('3D SCIENCE LAB: KNOWLEDGE CHECK\nClass 6–8 Physics: Gravity, Friction & Force', {
-    width: 2.3,
-    height: 0.18,
-    fontSize: 24,
+  // 2. Header and Question Labels (Enlarged for crisp distance reading)
+  const headerLabel = makeLabel('3D SCIENCE LAB: KNOWLEDGE CHECK — Class 6–8 Physics: Gravity, Friction & Force', {
+    width: 3.05,
+    height: 0.16,
+    fontSize: 32,
     bgColor: 'transparent',
     borderColor: 'transparent',
     color: '#22c55e',
   })
-  headerLabel.position.set(0, 0.56, 0.03)
+  headerLabel.position.set(0, 0.42, 0.03)
   group.add(headerLabel)
 
   const questionLabel = makeLabel('', {
-    width: 2.2,
-    height: 0.26,
-    fontSize: 22,
-    bgColor: 'rgba(255, 255, 255, 0.03)',
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    width: 3.05,
+    height: 0.22,
+    fontSize: 28,
+    bgColor: 'rgba(255, 255, 255, 0.04)',
+    borderColor: 'rgba(255, 255, 255, 0.12)',
     textAlign: 'left',
-    padding: 20,
+    padding: 24,
     color: '#ffffff',
   })
-  questionLabel.position.set(0, 0.32, 0.03)
+  questionLabel.position.set(0, 0.22, 0.03)
   group.add(questionLabel)
 
   const feedbackLabel = makeLabel('', {
-    width: 2.2,
+    width: 3.05,
     height: 0.12,
-    fontSize: 20,
+    fontSize: 26,
     bgColor: 'transparent',
     borderColor: 'transparent',
-    color: '#a1a1aa',
+    color: '#cbd5e1',
   })
-  feedbackLabel.position.set(0, -0.48, 0.03)
+  feedbackLabel.position.set(0, -0.44, 0.03)
   group.add(feedbackLabel)
 
-  // 3. Option Buttons (3 options)
-  const OPTION_Y = [0.08, -0.11, -0.30]
+  // 3. Option Buttons (3 options) - Wide and prominent
+  const OPTION_Y = [0.03, -0.12, -0.27]
   const optionMeshes = []
   const optionLabels = []
 
-  const btnBoxGeo = new THREE.BoxGeometry(2.1, 0.14, 0.04)
+  const btnBoxGeo = new THREE.BoxGeometry(3.0, 0.12, 0.04)
 
   for (let i = 0; i < 3; i++) {
     const btnMesh = new THREE.Mesh(btnBoxGeo, materials.buttonSecondary.clone())
@@ -131,13 +133,13 @@ export function createQuizStation({ scene, materials, interaction, stateManager 
     optionMeshes.push(btnMesh)
 
     const label = makeLabel(`Option ${i + 1}`, {
-      width: 2.05,
-      height: 0.13,
-      fontSize: 21,
+      width: 2.95,
+      height: 0.11,
+      fontSize: 26,
       bgColor: 'transparent',
       borderColor: 'transparent',
       textAlign: 'left',
-      padding: 16,
+      padding: 20,
       color: '#e4e4e7',
     })
     label.position.set(0, OPTION_Y[i], 0.065)
@@ -152,21 +154,21 @@ export function createQuizStation({ scene, materials, interaction, stateManager 
   }
 
   // 4. Restart Button (initially hidden)
-  const restartBtnGeo = new THREE.BoxGeometry(0.6, 0.15, 0.04)
+  const restartBtnGeo = new THREE.BoxGeometry(0.85, 0.15, 0.04)
   const restartMesh = new THREE.Mesh(restartBtnGeo, materials.buttonPrimary.clone())
-  restartMesh.position.set(0, -0.15, 0.04)
+  restartMesh.position.set(0, -0.08, 0.04)
   restartMesh.visible = false
   group.add(restartMesh)
 
   const restartLabel = makeLabel('RESTART QUIZ', {
-    width: 0.58,
+    width: 0.82,
     height: 0.13,
-    fontSize: 22,
+    fontSize: 30,
     bgColor: 'transparent',
     borderColor: 'transparent',
     color: '#000000',
   })
-  restartLabel.position.set(0, -0.15, 0.065)
+  restartLabel.position.set(0, -0.08, 0.065)
   restartLabel.visible = false
   group.add(restartLabel)
 
@@ -283,7 +285,6 @@ export function createQuizStation({ scene, materials, interaction, stateManager 
         at: Date.now(),
       }),
     }).catch((err) => {
-      // Ignore failures (log only)
       console.warn('3D Lab quiz result post failed (offline mode active):', err)
     })
   }

@@ -37,22 +37,20 @@ export function createRampStation({ scene, materials, interaction, stateManager,
   let rotTargetAngle = currentAngle
 
   // 1. Station Base
-  const baseGeo = new THREE.BoxGeometry(0.7, 0.02, 0.45)
+  const baseGeo = new THREE.BoxGeometry(0.8, 0.02, 0.48)
   const baseMesh = new THREE.Mesh(baseGeo, materials.standBase)
-  baseMesh.position.set(0, 0.01, 0)
+  baseMesh.position.set(0, 0.01, 0.04)
   baseMesh.receiveShadow = true
   group.add(baseMesh)
 
   // 2. Incline Pivot Assembly
-  // Pivot point is near the front bottom of the base
   const pivotGroup = new THREE.Group()
-  pivotGroup.position.set(0, 0.03, 0.16)
+  pivotGroup.position.set(0, 0.03, 0.14)
   group.add(pivotGroup)
 
   // Ramp Board
   const rampGeo = new THREE.BoxGeometry(RAMP_WIDTH, RAMP_THICKNESS, RAMP_LENGTH)
   const rampMesh = new THREE.Mesh(rampGeo, materials.rampSurface)
-  // Center ramp mesh so its bottom rests at pivotGroup origin (0, 0, 0) extending back
   rampMesh.position.set(0, RAMP_THICKNESS / 2, -RAMP_LENGTH / 2)
   rampMesh.castShadow = true
   rampMesh.receiveShadow = true
@@ -71,34 +69,31 @@ export function createRampStation({ scene, materials, interaction, stateManager,
   pivotGroup.add(blockMesh)
 
   function updateBlockPosition() {
-    // Distance s along ramp from top to bottom
-    // Top is at z = -RAMP_LENGTH + BLOCK_SIZE/2, bottom is at z = -BLOCK_SIZE/2
     const zPos = -(RAMP_LENGTH - BLOCK_SIZE / 2 - 0.02) + blockDist
     blockMesh.position.set(0, RAMP_THICKNESS + (BLOCK_SIZE * 0.7) / 2, zPos)
   }
 
   function applyRampRotation(angleDeg) {
-    // Rotation around X axis
     pivotGroup.rotation.x = -(angleDeg * Math.PI) / 180
   }
 
-  // 4. Information Labels
+  // 4. Information Labels - Enlarged for clear viewing from default camera
   const titleLabel = makeLabel('INCLINED PLANE & FRICTION\nCoefficient μ = 0.40', {
-    width: 0.65,
-    height: 0.18,
-    fontSize: 26,
-    bgColor: 'rgba(15, 17, 21, 0.92)',
+    width: 0.85,
+    height: 0.22,
+    fontSize: 34,
+    bgColor: 'rgba(15, 18, 24, 0.94)',
   })
-  titleLabel.position.set(0, 0.88, 0)
+  titleLabel.position.set(0, 0.94, 0)
   group.add(titleLabel)
 
   const infoLabel = makeLabel('', {
-    width: 0.55,
-    height: 0.22,
-    fontSize: 22,
-    lineHeight: 1.4,
+    width: 0.72,
+    height: 0.24,
+    fontSize: 28,
+    lineHeight: 1.35,
   })
-  infoLabel.position.set(0, 0.58, -0.15)
+  infoLabel.position.set(0, 0.60, 0.08)
   group.add(infoLabel)
 
   function refreshInfoLabel() {
@@ -119,43 +114,43 @@ export function createRampStation({ scene, materials, interaction, stateManager,
   updateBlockPosition()
   refreshInfoLabel()
 
-  // 5. Interactive Control Buttons
-  const btnGeo = new THREE.BoxGeometry(0.24, 0.035, 0.08)
+  // 5. Interactive Control Buttons - Angled toward camera
+  const btnGeo = new THREE.BoxGeometry(0.26, 0.04, 0.09)
 
   // CHANGE ANGLE Button
   const angleBtnMesh = new THREE.Mesh(btnGeo, materials.buttonSecondary.clone())
-  angleBtnMesh.position.set(-0.16, 0.03, 0.22)
+  angleBtnMesh.position.set(-0.18, 0.035, 0.27)
   angleBtnMesh.castShadow = true
   group.add(angleBtnMesh)
 
   const angleBtnLabel = makeLabel('ANGLE: 15°', {
-    width: 0.24,
-    height: 0.07,
-    fontSize: 22,
+    width: 0.26,
+    height: 0.08,
+    fontSize: 28,
     bgColor: 'transparent',
     borderColor: 'transparent',
     color: '#ffffff',
   })
-  angleBtnLabel.position.set(-0.16, 0.05, 0.22)
-  angleBtnLabel.rotation.x = -Math.PI / 2
+  angleBtnLabel.position.set(-0.18, 0.065, 0.27)
+  angleBtnLabel.rotation.x = -Math.PI / 4 // 45 degree tilt toward camera
   group.add(angleBtnLabel)
 
   // RELEASE Button
   const releaseBtnMesh = new THREE.Mesh(btnGeo, materials.buttonPrimary.clone())
-  releaseBtnMesh.position.set(0.16, 0.03, 0.22)
+  releaseBtnMesh.position.set(0.18, 0.035, 0.27)
   releaseBtnMesh.castShadow = true
   group.add(releaseBtnMesh)
 
   const releaseBtnLabel = makeLabel('RELEASE', {
-    width: 0.24,
-    height: 0.07,
-    fontSize: 22,
+    width: 0.26,
+    height: 0.08,
+    fontSize: 28,
     bgColor: 'transparent',
     borderColor: 'transparent',
     color: '#ffffff',
   })
-  releaseBtnLabel.position.set(0.16, 0.05, 0.22)
-  releaseBtnLabel.rotation.x = -Math.PI / 2
+  releaseBtnLabel.position.set(0.18, 0.065, 0.27)
+  releaseBtnLabel.rotation.x = -Math.PI / 4 // 45 degree tilt toward camera
   group.add(releaseBtnLabel)
 
   // Action Functions
@@ -210,11 +205,9 @@ export function createRampStation({ scene, materials, interaction, stateManager,
 
   // Frame update
   function update(dt) {
-    // 1. Smooth rotation easing (0.5s duration)
     if (isRotating) {
       rotTimer += dt
       const progress = Math.min(1.0, rotTimer / ROT_DURATION)
-      // Cubic ease-in-out: 3p^2 - 2p^3
       const eased = progress * progress * (3 - 2 * progress)
       const interpolated = rotStartAngle + (rotTargetAngle - rotStartAngle) * eased
       applyRampRotation(interpolated)
@@ -230,7 +223,6 @@ export function createRampStation({ scene, materials, interaction, stateManager,
       }
     }
 
-    // 2. Sliding block kinematics
     if (stationState === 'sliding') {
       const acc = rampAcceleration(currentAngle, MU)
       blockVel += acc * dt

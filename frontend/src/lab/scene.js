@@ -21,7 +21,7 @@ export function initLabScene(container, options = {}) {
 
   // 1. Scene, Camera, Renderer
   const scene = new THREE.Scene()
-  scene.background = new THREE.Color(0x0a0a0c)
+  scene.background = new THREE.Color(0xd8dde6)
 
   const width = container.clientWidth || 800
   const height = container.clientHeight || 600
@@ -41,7 +41,7 @@ export function initLabScene(container, options = {}) {
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFSoftShadowMap
   renderer.toneMapping = THREE.ACESFilmicToneMapping
-  renderer.toneMappingExposure = 1.05
+  renderer.toneMappingExposure = 1.15
   renderer.xr.enabled = true
 
   container.appendChild(renderer.domElement)
@@ -56,18 +56,18 @@ export function initLabScene(container, options = {}) {
   controls.maxPolarAngle = Math.PI / 2 - 0.04 // Cannot look below floor
   controls.minPolarAngle = 0.15
 
-  // 3. Lighting
-  // Soft ambient fill
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.45)
+  // 3. Lighting - raised for a bright, clear laboratory ambience
+  // Ambient fill
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.95)
   scene.add(ambientLight)
 
-  // Subtle hemisphere light simulating ceiling/floor contrast
-  const hemiLight = new THREE.HemisphereLight(0xffffff, 0x18181b, 0.45)
-  hemiLight.position.set(0, 2.8, 0)
+  // Hemisphere light simulating bright ceiling and reflective floor
+  const hemiLight = new THREE.HemisphereLight(0xffffff, 0x8a99ad, 0.85)
+  hemiLight.position.set(0, 2.9, 0)
   scene.add(hemiLight)
 
-  // Main directional light casting shadows
-  const dirLight = new THREE.DirectionalLight(0xffffff, 1.15)
+  // Main directional light casting crisp soft shadows
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1.85)
   dirLight.position.set(1.6, 2.9, -0.6)
   dirLight.target.position.set(0, 0.9, -1.8)
   dirLight.castShadow = true
