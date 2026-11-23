@@ -10,12 +10,14 @@ import {
   ChevronDown,
   PanelLeftClose,
   PanelLeft,
+  Box,
 } from 'lucide-react'
 import Student from './pages/Student'
 import Planner from './pages/Planner'
 import Resources from './pages/Resources'
 import Teacher from './pages/Teacher'
 import LiveClass from './pages/LiveClass'
+import Lab3D from './pages/Lab3D'
 import { startMonitoring } from './lib/connectivity'
 
 const NAV_GROUPS = [
@@ -23,6 +25,7 @@ const NAV_GROUPS = [
     group: 'Learn',
     items: [
       { id: 'Student', label: 'Student', icon: BookOpen },
+      { id: '3D Lab', label: '3D Lab', icon: Box },
       { id: 'Live Class', label: 'Live Class', icon: Video },
     ],
   },
@@ -406,6 +409,7 @@ export default function App() {
         {/* Main Content Area */}
         <main className="w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 flex-1">
           {tab === 'Student' && <Student onQueued={refresh} village={village} syncStatus={syncStatus} />}
+          {tab === '3D Lab' && <Lab3D />}
           {tab === 'Planner' && <Planner theme={theme} />}
           {tab === 'Resources' && <Resources />}
           {tab === 'Teacher' && <Teacher />}
