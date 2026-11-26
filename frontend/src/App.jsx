@@ -19,6 +19,8 @@ import Teacher from './pages/Teacher'
 import LiveClass from './pages/LiveClass'
 import Lab3D from './pages/Lab3D'
 import { startMonitoring } from './lib/connectivity'
+import { restoreSession } from './lib/auth'
+import { AccountPanel } from './components/AccountPanel'
 
 const NAV_GROUPS = [
   {
@@ -105,6 +107,11 @@ export default function App() {
   }
 
   // Ensure initial village is persisted in localStorage
+  // Restore a signed-in session from the refresh cookie on page load.
+  useEffect(() => {
+    restoreSession()
+  }, [])
+
   useEffect(() => {
     try {
       if (!localStorage.getItem('gs_village')) {
@@ -266,6 +273,11 @@ export default function App() {
         <div className="p-3 border-t border-white/[0.08] dark:border-white/[0.08] border-zinc-200 shrink-0 space-y-2.5 bg-[#0a0a0b] dark:bg-[#0a0a0b] bg-white">
           {!sidebarCollapsed ? (
             <>
+              {/* Account */}
+              <div className="pb-2 border-b border-white/[0.06] dark:border-white/[0.06] border-zinc-100">
+                <AccountPanel />
+              </div>
+
               {/* Village Selector */}
               <div className="space-y-1">
                 <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-500 text-zinc-400">

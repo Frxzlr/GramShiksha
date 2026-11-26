@@ -6,3 +6,5 @@ backend/.env.*
 .DS_Store
 dist
 backend/data.json
+!.env.example
+!backend/.env.example

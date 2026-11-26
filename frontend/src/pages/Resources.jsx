@@ -18,6 +18,8 @@ import {
   TableHeaderCell,
   TableCell,
 } from '../components/Table'
+import { AccountPanel, useAuthUser } from '../components/AccountPanel'
+import { authFetch, errorMessage } from '../lib/auth'
 
 const fetchApi = async (url, options) => {
   try {
@@ -37,14 +39,17 @@ export default function Resources() {
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [actionError, setActionError] = useState(null)
+  const user = useAuthUser()
+  const isPlanner = user?.role === 'planner'
 
   const fetchData = async () => {
     setLoading(true)
     setError(null)
     try {
       const [resResources, resSchools] = await Promise.all([
-        fetchApi('/api/resources'),
-        fetchApi('/api/schools'),
+        fetchApi('/api/v1/resources'),
+        fetchApi('/api/v1/schools'),
       ])
 
       if (!resResources.ok) {
@@ -74,8 +79,8 @@ export default function Resources() {
     const loadData = async () => {
       try {
         const [resResources, resSchools] = await Promise.all([
-          fetchApi('/api/resources'),
-          fetchApi('/api/schools'),
+          fetchApi('/api/v1/resources'),
+          fetchApi('/api/v1/schools'),
         ])
 
         if (!resResources.ok) {
@@ -151,20 +156,28 @@ export default function Resources() {
       prev.map((item) => (item.id === id ? { ...item, stock: newStock } : item))
     )
 
+    setActionError(null)
     try {
-      const response = await fetchApi(`/api/resources/${id}`, {
+      // Send the change (+1 / -1), not the new total: the server applies it
+      // atomically, so two planners clicking at once never lose an update.
+      const response = await authFetch(`/api/v1/resources/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ stock: newStock }),
+        body: JSON.stringify({ delta: newStock - previousStock }),
       })
 
       if (!response.ok) {
-        throw new Error(`Server returned ${response.status}`)
+        throw new Error(await errorMessage(response, `Server returned ${response.status}`))
       }
+      const saved = await response.json()
+      setResources((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, stock: saved.stock } : item))
+      )
     } catch (err) {
       console.error('Failed to update stock on server:', err)
+      setActionError(err.message)
       // Revert optimistic update on failure
       setResources((prev) =>
         prev.map((item) => (item.id === id ? { ...item, stock: previousStock } : item))
@@ -227,6 +240,19 @@ export default function Resources() {
           </Badge>
         </div>
       </div>
+
+      {/* Editing stock needs a planner account */}
+      {!isPlanner && (
+        <div className="max-w-sm p-3 rounded-[8px] border border-amber-500/30 bg-amber-500/5 space-y-2">
+          <p className="text-[13px] text-amber-300 dark:text-amber-300 text-amber-700">
+            {user
+              ? `Signed in as ${user.role}. Changing stock needs a planner account.`
+              : 'Sign in with a planner account to change stock levels.'}
+          </p>
+          {!user && <AccountPanel startOpen />}
+        </div>
+      )}
+      {actionError && <p className="text-[13px] text-red-400">{actionError}</p>}
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 bg-[#111214] dark:bg-[#111214] bg-white border border-white/[0.08] dark:border-white/[0.08] border-zinc-200 rounded-[8px]">

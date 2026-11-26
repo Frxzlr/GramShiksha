@@ -274,10 +274,11 @@ export function createQuizStation({ scene, materials, interaction, stateManager 
       }
     })()
 
-    fetch('/api/results', {
+    fetch('/api/v1/results', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        clientId: crypto.randomUUID(),
         lessonId: 0,
         lessonTitle: '3D Science Lab Quiz',
         village,

@@ -11,6 +11,7 @@ import { Badge } from '../components/Badge'
 import { Skeleton } from '../components/Skeleton'
 import { EmptyState } from '../components/EmptyState'
 import { Segmented } from '../components/Segmented'
+import { authFetch } from '../lib/auth'
 
 const fetchApi = async (url, options) => {
   try {
@@ -52,7 +53,7 @@ export default function Student({ onQueued, village: propVillage, syncStatus: _s
     setLoading(true)
     setError(null)
     try {
-      const res = await fetchApi('/api/lessons')
+      const res = await fetchApi('/api/v1/lessons')
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       setLessons(data)
@@ -68,7 +69,7 @@ export default function Student({ onQueued, village: propVillage, syncStatus: _s
     let ignore = false
     const init = async () => {
       try {
-        const res = await fetchApi('/api/lessons')
+        const res = await fetchApi('/api/v1/lessons')
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const data = await res.json()
         if (!ignore) {
@@ -126,6 +127,9 @@ export default function Student({ onQueued, village: propVillage, syncStatus: _s
     } catch {}
 
     const result = {
+      // A unique id per attempt: if this request is retried, the server
+      // recognises it and does not store the result twice.
+      clientId: crypto.randomUUID(),
       lessonId: selectedLesson.id,
       lessonTitle: selectedLesson.title,
       village: village || 'Unknown Village',
@@ -135,7 +139,8 @@ export default function Student({ onQueued, village: propVillage, syncStatus: _s
     }
 
     try {
-      await fetchApi('/api/results', {
+      // authFetch: if a student is signed in, the result is saved as theirs.
+      await authFetch('/api/v1/results', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(result),

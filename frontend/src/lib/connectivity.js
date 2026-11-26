@@ -31,12 +31,13 @@ export async function flushQueue() {
 
   try {
     const batch = queue.slice(0, 50)
-    const res = await fetch('/api/connectivity', {
+    const res = await fetch('/api/v1/connectivity', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(batch),
     })
-    if (res.ok) {
+    const rejected = res.status >= 400 && res.status < 500 && res.status !== 429
+    if (res.ok || rejected) {
       const remaining = queue.slice(batch.length)
       saveQueue(remaining)
       if (remaining.length > 0) {
@@ -57,12 +58,12 @@ export async function measure() {
   try {
     // 1. Measure RTT with tiny health request
     const rttStart = performance.now()
-    const rttRes = await fetch(`/api/health?t=${Date.now()}`, { cache: 'no-store' })
+    const rttRes = await fetch(`/api/v1/health?t=${Date.now()}`, { cache: 'no-store' })
     const rttMs = rttRes.ok ? Math.round(performance.now() - rttStart) : null
 
     // 2. Measure download throughput with ~100 KB dummy payload
     const pingStart = performance.now()
-    const res = await fetch(`/api/ping?t=${Date.now()}`, { cache: 'no-store' })
+    const res = await fetch(`/api/v1/ping?t=${Date.now()}`, { cache: 'no-store' })
     if (!res.ok) {
       throw new Error(`Ping HTTP status ${res.status}`)
     }
@@ -122,7 +123,7 @@ export async function takeAndRecordSample(village) {
     queueSample(sample)
   } else {
     try {
-      await fetch('/api/connectivity', {
+      await fetch('/api/v1/connectivity', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sample),

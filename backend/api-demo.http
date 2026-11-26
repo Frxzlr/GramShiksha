@@ -1,0 +1,121 @@
+# Demo requests for the backend viva.
+# Open in VS Code with the "REST Client" extension (by Huachao Mao) and click
+# "Send Request" above each one. Run them top to bottom: the login requests
+# store tokens that later requests use.
+# Replace Demo@1234 with your SEED_PASSWORD if you chose a different one.
+
+@base = http://localhost:4000/api/v1
+@password = Demo@1234
+
+### 1. Health check (public)
+GET {{base}}/health
+
+### 2. Valid request: list lessons (public)
+GET {{base}}/lessons
+
+### 3. Invalid request -> 400 with our standard error format
+POST {{base}}/auth/register
+Content-Type: application/json
+
+{ "name": "", "email": "not-an-email", "password": "123", "role": "planner" }
+
+### 4. Log in as student 1
+# @name student1
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "student1@gramshiksha.in", "password": "{{password}}" }
+
+### 5. Log in as student 2
+# @name student2
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "student2@gramshiksha.in", "password": "{{password}}" }
+
+### 6. Log in as teacher
+# @name teacher
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "teacher@gramshiksha.in", "password": "{{password}}" }
+
+### 7. Log in as planner
+# @name planner
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "planner@gramshiksha.in", "password": "{{password}}" }
+
+### 8. No token -> 401
+GET {{base}}/results
+
+### 9. Student token on a staff-only route -> 403 (wrong role)
+GET {{base}}/results
+Authorization: Bearer {{student1.response.body.accessToken}}
+
+### 10. Student 2's own results
+# @name student2Results
+GET {{base}}/results/me
+Authorization: Bearer {{student2.response.body.accessToken}}
+
+### 11. Student 1 tries to read student 2's first result -> 403 (not the owner)
+GET {{base}}/results/{{student2Results.response.body.$.data[0].id}}
+Authorization: Bearer {{student1.response.body.accessToken}}
+
+### 12. Teacher: filtered, sorted, paginated list (watch the SQL in the terminal)
+GET {{base}}/results?village=Bargi&sort=-score&page=1&limit=3
+Authorization: Bearer {{teacher.response.body.accessToken}}
+
+### 13. Asking for a huge page -> 400
+GET {{base}}/results?limit=5000
+Authorization: Bearer {{teacher.response.body.accessToken}}
+
+### 14. Save a quiz result. Send it twice: 201, then 200 with "duplicates": 1
+# (Recording again? Change the last digit of clientId to get a fresh one.)
+POST {{base}}/results
+Content-Type: application/json
+Authorization: Bearer {{student1.response.body.accessToken}}
+
+{
+  "clientId": "6f1c2a9e-1b7d-4a3f-9c55-0d2e8b7a4c11",
+  "lessonId": 1,
+  "lessonTitle": "The Water Cycle",
+  "village": "Bargi",
+  "score": 2,
+  "total": 2
+}
+
+### 15. Teacher tries to change stock -> 403 (planner only)
+PATCH {{base}}/resources/1
+Content-Type: application/json
+Authorization: Bearer {{teacher.response.body.accessToken}}
+
+{ "delta": 1 }
+
+### 16. Planner: +1 stock (atomic)
+PATCH {{base}}/resources/1
+Content-Type: application/json
+Authorization: Bearer {{planner.response.body.accessToken}}
+
+{ "delta": 1 }
+
+### 17. Stock below zero -> 422 from the database CHECK constraint
+PATCH {{base}}/resources/3
+Content-Type: application/json
+Authorization: Bearer {{planner.response.body.accessToken}}
+
+{ "delta": -100 }
+
+### 18. One school with its resources (one JOIN query)
+GET {{base}}/schools/1
+
+### 19. Security headers: look at the response headers
+GET {{base}}/lessons
+
+### 20. Wrong password: keep sending -> after 5 failed attempts you get 429
+# (request 3 above also counted as one failed attempt)
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "student2@gramshiksha.in", "password": "wrong-guess" }

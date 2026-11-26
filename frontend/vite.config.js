@@ -26,7 +26,7 @@ export default defineConfig({
         navigateFallbackDenylist: [/^\/api/],
         runtimeCaching: [
           {
-            urlPattern: /\/api\/lessons/,
+            urlPattern: /\/api\/(v1\/)?lessons/,
             handler: 'NetworkFirst',
             options: { cacheName: 'lessons-cache' },
           },

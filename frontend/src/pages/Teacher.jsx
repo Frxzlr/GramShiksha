@@ -11,19 +11,12 @@ import { Card, CardHeader } from '../components/Card'
 import { Button } from '../components/Button'
 import { Badge } from '../components/Badge'
 import { Skeleton } from '../components/Skeleton'
-
-const fetchApi = async (url, options) => {
-  try {
-    const res = await fetch(url, options)
-    const ct = res.headers.get('content-type') || ''
-    if (res.ok && (ct.includes('application/json') || options?.method === 'POST')) return res
-  } catch {
-    // fallback
-  }
-  return fetch(`http://localhost:4000${url}`, options)
-}
+import { AccountPanel, useAuthUser } from '../components/AccountPanel'
+import { authFetch, errorMessage } from '../lib/auth'
 
 export default function Teacher() {
+  const user = useAuthUser()
+  const isTeacher = user?.role === 'teacher'
   const [chapterText, setChapterText] = useState('')
   const [loading, setLoading] = useState(false)
   const [publishing, setPublishing] = useState(false)
@@ -40,7 +33,7 @@ export default function Teacher() {
     setSuccessMessage(null)
 
     try {
-      const res = await fetchApi('/api/generate', {
+      const res = await authFetch('/api/v1/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,18 +42,15 @@ export default function Teacher() {
       })
 
       if (!res.ok) {
-        throw new Error('Teachers need to be online to create lessons.')
+        throw new Error(await errorMessage(res, 'Could not generate the lesson.'))
       }
 
-      const data = await res.json()
-      if (data.error) {
-        throw new Error(data.error)
-      }
-
-      setGeneratedLesson(data)
+      setGeneratedLesson(await res.json())
     } catch (err) {
       console.error('Lesson generation error:', err)
-      setError('Teachers need to be online to create lessons.')
+      setError(
+        err instanceof TypeError ? 'Teachers need to be online to create lessons.' : err.message
+      )
     } finally {
       setLoading(false)
     }
@@ -130,7 +120,7 @@ export default function Teacher() {
     }
 
     try {
-      const res = await fetchApi('/api/lessons', {
+      const res = await authFetch('/api/v1/lessons', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -139,7 +129,7 @@ export default function Teacher() {
       })
 
       if (!res.ok) {
-        throw new Error('Failed to publish lesson. Teachers need to be online.')
+        throw new Error(await errorMessage(res, 'Failed to publish lesson.'))
       }
 
       setSuccessMessage('Lesson published successfully. Synced to student devices.')
@@ -147,7 +137,9 @@ export default function Teacher() {
       setChapterText('')
     } catch (err) {
       console.error('Publishing error:', err)
-      setError('Teachers need to be online to create lessons.')
+      setError(
+        err instanceof TypeError ? 'Teachers need to be online to create lessons.' : err.message
+      )
     } finally {
       setPublishing(false)
     }
@@ -177,6 +169,18 @@ export default function Teacher() {
           </Badge>
         </div>
       </div>
+
+      {/* Sign-in required for generating and publishing */}
+      {!isTeacher && (
+        <div className="max-w-sm p-3 rounded-[8px] border border-amber-500/30 bg-amber-500/5 space-y-2">
+          <p className="text-[13px] text-amber-300 dark:text-amber-300 text-amber-700">
+            {user
+              ? `Signed in as ${user.role}. Generating and publishing lessons needs a teacher account.`
+              : 'Sign in with a teacher account to generate and publish lessons.'}
+          </p>
+          {!user && <AccountPanel startOpen />}
+        </div>
+      )}
 
       {/* Notifications */}
       {error && (

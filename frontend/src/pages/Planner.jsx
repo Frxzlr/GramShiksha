@@ -47,7 +47,7 @@ export default function Planner({ theme = 'dark' }) {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetchApi('/api/analytics')
+      const res = await fetchApi('/api/v1/analytics')
       if (!res.ok) {
         throw new Error(`Failed to fetch analytics (Status ${res.status})`)
       }
@@ -65,7 +65,7 @@ export default function Planner({ theme = 'dark' }) {
     let ignore = false
     const loadData = async () => {
       try {
-        const res = await fetchApi('/api/analytics')
+        const res = await fetchApi('/api/v1/analytics')
         if (!res.ok) {
           throw new Error(`Failed to fetch analytics (Status ${res.status})`)
         }
